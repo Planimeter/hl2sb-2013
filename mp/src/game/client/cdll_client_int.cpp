@@ -896,6 +896,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 			OverrideRootUI();
 		}
 	}
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
 #endif
 
 	// We aren't happy unless we get all of our interfaces.
@@ -1675,6 +1676,7 @@ void CHLClient::LevelInitPostEntity( )
 {
 #ifdef HL2SB
 	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(true);");
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(true);");
 	IBaseMenu->m_pHTMLPanel->RequestFocus();
 #endif
 	IGameSystem::LevelInitPostEntityAllSystems();
@@ -1729,6 +1731,7 @@ void CHLClient::LevelShutdown( void )
 
 #ifdef HL2SB
 	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(false);");
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
 	IBaseMenu->m_pHTMLPanel->RequestFocus();
 #endif
 

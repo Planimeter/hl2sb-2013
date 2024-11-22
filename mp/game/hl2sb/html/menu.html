@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			#InGameOnly {
+				display: none;
+			}
+
+			h1 {
+				position: absolute;
+				top: 25vh;
+				left: 5vw;
+				transform: translateY(-50%);
+				margin: 0;
+				font-size: 3em;
+				font-family: Arial;
+			}
+
+			button {
+				transform: translateY(15.5vw);
+				margin: 0.25em 0em 0em 4.5vw;
+				font-size: 1em;
+				padding: 0.5em 1vw;
+			}
+		</style>
+		<script>
+			function togglevisible(show) {
+				var div = document.getElementById("InGameOnly");
+				if (div) {
+					div.style.display = show ? "block" : "none";
+				}
+			}
+			
+			function modifybg(remove) {
+				const body = document.body;
+				const h1 = document.querySelector('h1');
+
+				if (remove) {
+					body.style.removeProperty('background-color');
+					h1.style.color = 'white';
+				} else {
+					body.style.backgroundColor = 'lightgray';
+					h1.style.color = 'black';
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<main>
+			<h1>Half-Life 2: Sandbox</h1>
+			<div id="InGameOnly">
+				<button onclick="alert('cmd:gamemenucommand ResumeGame');">RESUME GAME</button> <br /> <br />
+				<button onclick="alert('cmd:gamemenucommand Disconnect');">DISCONNECT</button> <br /> <br />
+				<button onclick="alert('cmd:gamemenucommand OpenPlayerListDialog');">PLAYER LIST</button> <br /> <br />
+			</div>
+			<button onclick="alert('cmd:gamemenucommand OpenServerBrowser');">SERVER BROWSER</button> <br /> <br />
+			<button onclick="alert('cmd:gamemenucommand OpenCreateMultiplayerGameDialog');">CREATE SERVER</button> <br /> <br />
+			<button onclick="alert('cmd:gamemenucommand OpenOptionsDialog');">OPTIONS</button> <br /> <br />
+			<button onclick="alert('cmd:gamemenucommand Quit');">QUIT</button> <br /> <br /> <br />
+		</main>
+	</body>
+</html>
