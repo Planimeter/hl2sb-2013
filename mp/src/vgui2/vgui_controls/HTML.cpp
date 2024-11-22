@@ -15,6 +15,7 @@
 
 #include "filesystem.h"
 #include "../vgui2/src/vgui_key_translation.h"
+#include "../../game/client/cdll_client_int.h"
 
 #undef PostMessage
 #undef MessageBox
@@ -1216,6 +1217,7 @@ void HTML::CHTMLFindBar::OnCommand( const char *pchCmd )
 	else
 		BaseClass::OnCommand( pchCmd );
 
+	RequestFocus();
 }
 
 
@@ -1595,7 +1597,6 @@ void HTML::BrowserShowToolTip( HTML_ShowToolTip_t *pCmd )
 	tip->SetMaxToolTipWidth( MAX( 200, GetWide()/2 ) );
 	tip->ShowTooltip( this );
 	*/
-	
 }
 
 
@@ -1726,14 +1727,28 @@ void HTML::BrowserLinkAtPositionResponse( HTML_LinkAtPosition_t *pCmd )
 //-----------------------------------------------------------------------------
 // Purpose: browser telling us to pop a javascript alert dialog
 //-----------------------------------------------------------------------------
-void HTML::BrowserJSAlert( HTML_JSAlert_t *pCmd )
+void HTML::BrowserJSAlert(HTML_JSAlert_t* pCmd)
 {
-	MessageBox *pDlg = new MessageBox( m_sCurrentURL, (const char *)pCmd->pchMessage, this );
-	pDlg->AddActionSignalTarget( this );
-	pDlg->SetCommand( new KeyValues( "DismissJSDialog", "result", false ) );
-	pDlg->DoModal();
+    // check if alert
+    if (strstr(pCmd->pchMessage, "cmd:") == pCmd->pchMessage)
+    {
+        const char* command = pCmd->pchMessage + 4;
+		if (command && strlen(command) > 0)
+		{
+			engine->ClientCmd_Unrestricted(command);
+			RequestFocus();
+		}
+		RequestFocus();
+    }
+    else
+    {
+        MessageBox* pDlg = new MessageBox(m_sCurrentURL, (const char*)pCmd->pchMessage, this);
+        pDlg->AddActionSignalTarget(this);
+        pDlg->SetCommand(new KeyValues("DismissJSDialog", "result", false));
+        pDlg->DoModal();
+    }
+	RequestFocus();
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose: browser telling us to pop a js confirm dialog
@@ -1786,5 +1801,3 @@ void HTML::UpdateSizeAndScrollBars()
 	BrowserResize();
 	InvalidateLayout();
 }
-
-

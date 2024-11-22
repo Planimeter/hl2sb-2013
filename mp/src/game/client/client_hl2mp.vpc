@@ -6,7 +6,7 @@
 
 $Macro SRCDIR		"..\.."
 $Macro GAMENAME 	"hl2mp" [!$SOURCESDK]
-$Macro GAMENAME 	"mod_hl2mp" [$SOURCESDK]
+$Macro GAMENAME 	"hl2sb" [$SOURCESDK]
 
 $Include "$SRCDIR\game\client\client_base.vpc"
 
@@ -15,11 +15,11 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories		"$BASE;hl2mp\ui,.\hl2mp,$SRCDIR\game\shared\hl2mp,.\hl2,.\hl2\elements,$SRCDIR\game\shared\hl2"
-		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL"
+		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL;HL2SB"
 	}
 }
 
-$Project "Client (HL2MP)"
+$Project "Client (HL2SB)"
 {
 	$Folder	"Source Files"
 	{
@@ -112,6 +112,11 @@ $Project "Client (HL2MP)"
 			$File	"hl2\hud_zoom.cpp"
 			$File	"hl2\shieldproxy.cpp"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
+		}
+		$Folder "HL2SB"
+		{
+			$File "hl2sb\basemenu.h"
+			$File "hl2sb\basemenu.cpp"
 		}
 
 		$Folder	"HL2MP"

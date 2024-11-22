@@ -170,6 +170,10 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
+#ifdef HL2SB
+#include "basemenu.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -217,6 +221,10 @@ IReplaySystem *g_pReplay = NULL;
 #endif
 
 IHaptics* haptics = NULL;// NVNT haptics system interface singleton
+
+#ifdef HL2SB
+RootPanel          	*IBaseMenu;
+#endif
 
 //=============================================================================
 // HPE_BEGIN
@@ -878,6 +886,18 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	ClientSteamContext().Activate();
 #endif
 
+#ifdef HL2SB
+	if ( CommandLine()->FindParm( "-gameui" ) == 0 )
+	{
+		if ( !IBaseMenu )
+		{
+			OverrideUI->Create( NULL );
+			IBaseMenu = OverrideUI->GetMenuBase();
+			OverrideRootUI();
+		}
+	}
+#endif
+
 	// We aren't happy unless we get all of our interfaces.
 	// please don't collapse this into one monolithic boolean expression (impossible to debug)
 	if ( (engine = (IVEngineClient *)appSystemFactory( VENGINE_CLIENT_INTERFACE_VERSION, NULL )) == NULL )
@@ -1196,6 +1216,13 @@ void CHLClient::Shutdown( void )
 	UncacheAllMaterials();
 
 	IGameSystem::ShutdownAllSystems();
+
+#ifdef HL2SB
+	if ( IBaseMenu )
+  	{
+    	IBaseMenu->~RootPanel();
+  	}
+#endif
 	
 	gHUD.Shutdown();
 	VGui_Shutdown();
@@ -1646,6 +1673,10 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 //-----------------------------------------------------------------------------
 void CHLClient::LevelInitPostEntity( )
 {
+#ifdef HL2SB
+	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(true);");
+	IBaseMenu->m_pHTMLPanel->RequestFocus();
+#endif
 	IGameSystem::LevelInitPostEntityAllSystems();
 	C_PhysPropClientside::RecreateAll();
 	internalCenterPrint->Clear();
@@ -1695,6 +1726,11 @@ void CHLClient::LevelShutdown( void )
 	// Remove temporary entities before removing entities from the client entity list so that the te_* may
 	// clean up before hand.
 	tempents->LevelShutdown();
+
+#ifdef HL2SB
+	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(false);");
+	IBaseMenu->m_pHTMLPanel->RequestFocus();
+#endif
 
 	// Now release/delete the entities
 	cl_entitylist->Release();
