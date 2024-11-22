@@ -55,3 +55,4 @@ config.cfg
 *.tmp
 
 *.lib
+*.vcxproj.*
