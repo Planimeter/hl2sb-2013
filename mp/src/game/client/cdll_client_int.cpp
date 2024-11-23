@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //===========================================================================//
 #include "cbase.h"
+#include "basemenu.h" // please put this file in VPC - Mohamed/Guest
 #include <crtmemdebug.h>
 #include "vgui_int.h"
 #include "clientmode.h"
@@ -217,6 +218,9 @@ IReplaySystem *g_pReplay = NULL;
 #endif
 
 IHaptics* haptics = NULL;// NVNT haptics system interface singleton
+
+RootPanel          	*IBaseMenu;
+
 
 //=============================================================================
 // HPE_BEGIN
@@ -878,6 +882,17 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	ClientSteamContext().Activate();
 #endif
 
+	if ( CommandLine()->FindParm( "-gameui" ) == 0 )
+	{
+		if ( !IBaseMenu )
+		{
+			OverrideUI->Create( NULL );
+			IBaseMenu = OverrideUI->GetMenuBase();
+			OverrideRootUI();
+		}
+	}
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
+
 	// We aren't happy unless we get all of our interfaces.
 	// please don't collapse this into one monolithic boolean expression (impossible to debug)
 	if ( (engine = (IVEngineClient *)appSystemFactory( VENGINE_CLIENT_INTERFACE_VERSION, NULL )) == NULL )
@@ -1196,6 +1211,11 @@ void CHLClient::Shutdown( void )
 	UncacheAllMaterials();
 
 	IGameSystem::ShutdownAllSystems();
+
+	if ( IBaseMenu )
+  	{
+    	IBaseMenu->~RootPanel();
+  	}
 	
 	gHUD.Shutdown();
 	VGui_Shutdown();
@@ -1646,6 +1666,9 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 //-----------------------------------------------------------------------------
 void CHLClient::LevelInitPostEntity( )
 {
+	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(true);");
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(true);");
+	IBaseMenu->m_pHTMLPanel->RequestFocus();
 	IGameSystem::LevelInitPostEntityAllSystems();
 	C_PhysPropClientside::RecreateAll();
 	internalCenterPrint->Clear();
@@ -1695,6 +1718,9 @@ void CHLClient::LevelShutdown( void )
 	// Remove temporary entities before removing entities from the client entity list so that the te_* may
 	// clean up before hand.
 	tempents->LevelShutdown();
+	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(false);");
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
+	IBaseMenu->m_pHTMLPanel->RequestFocus();
 
 	// Now release/delete the entities
 	cl_entitylist->Release();
