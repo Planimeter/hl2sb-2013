@@ -155,7 +155,6 @@ typedef struct
   long unc_size;             // may be -1 if not yet known (e.g. being streamed in)
 } ZIPENTRYW;
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // OpenZip()

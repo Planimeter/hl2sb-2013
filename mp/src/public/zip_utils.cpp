@@ -122,8 +122,8 @@ public:
 			// generate safe name at the desired prefix
 			char uniqueFilename[MAX_PATH];
 			SYSTEMTIME sysTime;                                                       \
-			GetLocalTime( &sysTime );   
-			sprintf( uniqueFilename, "%d_%d_%d_%d_%d.tmp", sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds );                                                \
+			GetLocalTime( &sysTime );   		
+			sprintf_s( uniqueFilename, "%d_%d_%d_%d_%d.tmp", sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds ); 
 			V_ComposeFileName( WritePath.String(), uniqueFilename, tempFileName, sizeof( tempFileName ) );
 		}
 
@@ -197,7 +197,7 @@ public:
 			static int counter = 0;
 			time_t now = time( NULL );
 			struct tm *tm = localtime( &now );
-			sprintf( uniqueFilename, "%d_%d_%d_%d_%d.tmp", tm->tm_wday, tm->tm_hour, tm->tm_min, tm->tm_sec, ++counter );                                                \
+			sprintf( uniqueFilename, "%d_%d_%d_%d_%d.tmp", tm->tm_wday, tm->tm_hour, tm->tm_min, tm->tm_sec, ++counter );                                          \
 			V_ComposeFileName( WritePath.String(), uniqueFilename, tempFileName, sizeof( tempFileName ) );
 		}
 
@@ -1245,7 +1245,12 @@ bool CZipFile::FileExistsInZip( const char *pRelativeName )
 //-----------------------------------------------------------------------------
 void CZipFile::AddFileToZip( const char *relativename, const char *fullpath, IZip::eCompressionType compressionType )
 {
+#ifdef WIN32
+	FILE *temp;
+	fopen_s(&temp, fullpath, "rb");
+#else
 	FILE *temp = fopen( fullpath, "rb" );
+#endif
 	if ( !temp )
 		return;
 

@@ -241,6 +241,7 @@ protected:
 	string_t				m_iszAmmoType;		// The name of the ammodef that we use when we fire. Bullet damage still comes from keyvalues.
 	int						m_iAmmoType;		// The cached index of the ammodef that we use when we fire.
 #else
+	int 					m_iAmmoType;
 	int						m_iSmallAmmoType;
 	int						m_iMediumAmmoType;
 	int						m_iLargeAmmoType;

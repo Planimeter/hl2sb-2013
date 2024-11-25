@@ -1,0 +1,67 @@
+name: hl2sb-2013
+
+on: [push, pull_request]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure dependencies
+        uses: ilammy/msvc-dev-cmd@v1  
+        
+      - name: Import RegKey
+        run: cd mp\src;REG IMPORT DefaultProjectExtension.reg
+      
+      - name: Create project
+        run: cd mp\src;devtools/bin/vpc.exe /hl2mp /2013 +game /mksln hl2sb.sln /define:VS2022
+
+      - name: Build project
+        run: cd mp\src;devenv hl2sb.sln /Build Release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.3.6
+        with:
+          name: hl2sb-2013
+          path: mp\game\hl2sb\bin\
+          if-no-files-found: 'error'
+          compression-level: 0
+
+  build_linux:
+    runs-on:
+      ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Configure
+        run: |
+          sudo apt-get install build-essential
+          sudo apt-get install gcc-multilib g++-multilib
+          chmod +x mp/src/creategameprojects
+          chmod +x mp/src/devtools/gendbg.sh
+          chmod +x mp/src/devtools/vpc
+          chmod +x mp/src/devtools/vpc_linux
+          chmod +x mp/src/devtools/linux/ccache
+          
+      - name: Create project
+        run: |
+          cd mp/src
+          ./creategameprojects
+      
+      - name: Build Project
+        run: |
+          cd mp/src
+          make -f games.mak
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.3.6
+        with:
+          name: hl2sb-2013
+          path: mp/game/hl2sb/bin/
+          if-no-files-found: 'error'
+          compression-level: 0
