@@ -69,12 +69,12 @@ protected:
 
 	MESSAGE_FUNC( OnApplyButtonEnable, "ApplyButtonEnable" );
 	void EnableApplyButton(bool bEnable);
+	PropertySheet *_propertySheet;
+	Button *_applyButton;
 	
 private:
-	PropertySheet *_propertySheet;
 	Button *_okButton;
 	Button *_cancelButton;
-	Button *_applyButton;
 
 	CPanelAnimationVar( int, m_iSheetInsetBottom, "sheetinset_bottom", "32" );
 };

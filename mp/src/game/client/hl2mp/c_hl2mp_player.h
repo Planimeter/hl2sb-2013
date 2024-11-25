@@ -111,7 +111,7 @@ private:
 	float m_flLastBodyYaw;
 	float m_flCurrentHeadYaw;
 	float m_flCurrentHeadPitch;
-
+	float m_fNextThinkPushAway;
 	int	  m_iIDEntIndex;
 
 	CountdownTimer m_blinkTimer;
