@@ -1,3 +1,4 @@
+#https://papers.cumincad.org/data/works/att/74bb.content.pdf
 #include "BaseVSShader.h"
 #include "realistic_sky_vs20.inc"
 #include "realistic_sky_ps30.inc"
@@ -5,7 +6,7 @@
 
 DEFINE_FALLBACK_SHADER(realistic_Sky, realistic_Sky_HDR_DX9)
 
-BEGIN_VS_SHADER(Realistic_Sky_HDR_DX9, "Sky shader based on the Hosek-Wilkie Skylight Model")
+BEGIN_VS_SHADER(Realistic_Sky_HDR_DX9, "Sky shader based on the Preetham sky model")
 
 BEGIN_SHADER_PARAMS
     SHADER_PARAM(SUN_PITCH, SHADER_PARAM_TYPE_FLOAT, "45", "Sun Zenith")
@@ -57,7 +58,7 @@ SHADER_DRAW
     DYNAMIC_STATE
     {
         // Convert normalized parameters (0-1) into angles
-        // sun_azimuth: 0 at X-axis, increases counterclockwise
+        // sun_azimuth: 0 at X-axis, increases clockwise
         float sun_azimuth = params[SUN_YAW]->GetFloatValue() * (M_PI / 180);
         float sun_inclination = params[SUN_PITCH]->GetFloatValue() * (M_PI / 180);
 
