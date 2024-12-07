@@ -7,6 +7,9 @@
 //	    _vs20.vcs
 //
 
+//realistic_sky_ps2x.fxc
+realistic_sky_vs20.fxc
+
 example_model_ps20b.fxc
 example_model_vs20.fxc
 

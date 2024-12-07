@@ -1,0 +1,4 @@
+patch
+{
+	include materials\skybox\realistic_sky.vmt
+}
