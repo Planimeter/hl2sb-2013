@@ -1,8 +1,8 @@
 "Realistic_sky"
 {
 	// Serves as the master control for all 6 sides of the skybox
-	"$sun_yaw" 		0	// East: 0, South: 90, West: 180, North 270
-	"$sun_pitch" 	45	// 0 straight up, 90 at horizon.
+	"$sun_yaw" 	45	// West: 0, North: 90, East: 180, South 270
+	"$sun_pitch" 	-45	// 90 straight up, 0 at horizon.
 	"$exposure" 	25	// Compensate sky brightness.
 	"$turbidity"	2 	// Min: 2
 	
@@ -14,7 +14,7 @@
 	//		resultVar	$sun_pitch
 	//		sineperiod	32
 	//		sinemin		0
-	//		sinemax		90
+	//		sinemax		-90
 	//	}
 	//	
 	//	Sine

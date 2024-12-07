@@ -1,4 +1,4 @@
-#https://papers.cumincad.org/data/works/att/74bb.content.pdf
+//https://papers.cumincad.org/data/works/att/74bb.content.pdf
 #include "BaseVSShader.h"
 #include "realistic_sky_vs20.inc"
 #include "realistic_sky_ps30.inc"
@@ -11,7 +11,7 @@ BEGIN_VS_SHADER(Realistic_Sky_HDR_DX9, "Sky shader based on the Preetham sky mod
 BEGIN_SHADER_PARAMS
     SHADER_PARAM(SUN_PITCH, SHADER_PARAM_TYPE_FLOAT, "45", "Sun Zenith")
     SHADER_PARAM(SUN_YAW, SHADER_PARAM_TYPE_FLOAT, "0", "Sun Azimuth")
-    SHADER_PARAM(EXPOSURE, SHADER_PARAM_TYPE_FLOAT, "15", "Decrease exposure by this much")
+    SHADER_PARAM(EXPOSURE, SHADER_PARAM_TYPE_FLOAT, "25", "Decrease exposure by this much")
     SHADER_PARAM(TURBIDITY, SHADER_PARAM_TYPE_FLOAT, "2", "Turbidity of the sky")
 END_SHADER_PARAMS
 
@@ -57,10 +57,15 @@ SHADER_DRAW
 
     DYNAMIC_STATE
     {
-        // Convert normalized parameters (0-1) into angles
-        // sun_azimuth: 0 at X-axis, increases clockwise
-        float sun_azimuth = params[SUN_YAW]->GetFloatValue() * (M_PI / 180);
-        float sun_inclination = params[SUN_PITCH]->GetFloatValue() * (M_PI / 180);
+        // light_environment shines from the opposite direction provided like so:
+        // For Yaw: start west, move counter clockwise.
+        // For Pitch: -90 for pointing straight down, 0 for Horizon.
+
+        // Spin the sun around to start West, and move counterclockwise.
+        float sun_azimuth = M_PI - params[SUN_YAW]->GetFloatValue() * (M_PI / 180);
+
+        // Flip the numbers around to get -90 noon 0 sunset.
+        float sun_inclination = (90 + params[SUN_PITCH]->GetFloatValue()) * (M_PI / 180);
 
         float sin_incl = sin(sun_inclination);
         float cos_incl = cos(sun_inclination);
