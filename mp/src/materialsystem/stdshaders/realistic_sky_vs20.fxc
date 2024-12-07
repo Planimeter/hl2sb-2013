@@ -1,0 +1,25 @@
+#include "common_vs_fxc.h"
+
+struct VS_INPUT
+{
+    float4 vPos : POSITION;  // Vertex position
+};
+
+struct VS_OUTPUT
+{
+    float4 projPos : POSITION; // Projected position for rendering
+    float3 viewDir : TEXCOORD0; // Normalized view direction
+};
+
+VS_OUTPUT main(VS_INPUT v)
+{
+    VS_OUTPUT o = (VS_OUTPUT)0;
+
+    // Project the position to clip space
+    o.projPos = mul(v.vPos, cModelViewProj);
+
+    // Use the vertex position as the view direction
+    o.viewDir = normalize(v.vPos.xyz);
+
+    return o;
+}
