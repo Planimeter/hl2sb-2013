@@ -1080,40 +1080,6 @@ void CViewRender::Render( vrect_t *rect )
     // Set for console commands, etc.
     render->SetMainView ( m_View.origin, m_View.angles );
 
-#ifdef HL2SB
-	//--------------------------------
-	// Handle camera anims
-	//--------------------------------
-	if (!UseVR() && pPlayer && cl_camera_anim_intensity.GetFloat() > 0)
-	{
-		if (pPlayer->GetViewModel(0))
-		{
-			int attachment = pPlayer->GetViewModel(0)->LookupAttachment("camera");
-			if (attachment != -1)
-			{
-				int rootBone = pPlayer->GetViewModel(0)->LookupAttachment("camera_root");
-				Vector cameraOrigin = Vector(0, 0, 0);
-				QAngle cameraAngles = QAngle(0, 0, 0);
-				Vector rootOrigin = Vector(0, 0, 0);
-				QAngle rootAngles = QAngle(0, 0, 0);
-				pPlayer->GetViewModel(0)->GetAttachmentLocal(attachment, cameraOrigin, cameraAngles);
-				if (rootBone != -1)
-				{
-					pPlayer->GetViewModel(0)->GetAttachmentLocal(rootBone, rootOrigin, rootAngles);
-					cameraOrigin -= rootOrigin;
-					cameraAngles -= rootAngles;
-#if 0 // i'm tired of seeing these
-					DevMsg("camera attachment found\n");
-#endif
-				}
-				view.angles += cameraAngles * cl_camera_anim_intensity.GetFloat();
-				view.origin += cameraOrigin * cl_camera_anim_intensity.GetFloat();
-			}
-		}
-	}
-#endif
-	
-
     for( StereoEye_t eEye = GetFirstEye(); eEye <= GetLastEye(); eEye = (StereoEye_t)(eEye+1) )
 	{
 		CViewSetup &view = GetView( eEye );
@@ -1124,7 +1090,7 @@ void CViewRender::Render( vrect_t *rect )
 			{
 				C_BasePlayer *pViewTarget = pPlayer;
 
-				if ( pPlayer->IsObserver() && pPlayer->GetObserverMode() == OBS_MODE_IN_EYE )
+				if ( pPlayer->IsObserver() && pPlayer->GetObserverMode() == OBS_MODE_INEYE )
 				{
 					pViewTarget = dynamic_cast<C_BasePlayer*>( pPlayer->GetObserverTarget() );
 				}
@@ -1255,6 +1221,39 @@ void CViewRender::Render( vrect_t *rect )
 			    }
 		    }
 	    }
+
+#ifdef HL2SB
+	//--------------------------------
+	// Handle camera anims
+	//--------------------------------
+	if (!UseVR() && pPlayer && cl_camera_anim_intensity.GetFloat() > 0)
+	{
+		if (pPlayer->GetViewModel(0))
+		{
+			int attachment = pPlayer->GetViewModel(0)->LookupAttachment("camera");
+			if (attachment != -1)
+			{
+				int rootBone = pPlayer->GetViewModel(0)->LookupAttachment("camera_root");
+				Vector cameraOrigin = Vector(0, 0, 0);
+				QAngle cameraAngles = QAngle(0, 0, 0);
+				Vector rootOrigin = Vector(0, 0, 0);
+				QAngle rootAngles = QAngle(0, 0, 0);
+				pPlayer->GetViewModel(0)->GetAttachmentLocal(attachment, cameraOrigin, cameraAngles);
+				if (rootBone != -1)
+				{
+					pPlayer->GetViewModel(0)->GetAttachmentLocal(rootBone, rootOrigin, rootAngles);
+					cameraOrigin -= rootOrigin;
+					cameraAngles -= rootAngles;
+#if 0 // i'm tired of seeing these
+					DevMsg("camera attachment found\n");
+#endif
+				}
+				view.angles += cameraAngles * cl_camera_anim_intensity.GetFloat();
+				view.origin += cameraOrigin * cl_camera_anim_intensity.GetFloat();
+			}
+		}
+	}
+#endif
 
 	    // Determine if we should draw view model ( client mode override )
 	    bool drawViewModel = g_pClientMode->ShouldDrawViewModel();
