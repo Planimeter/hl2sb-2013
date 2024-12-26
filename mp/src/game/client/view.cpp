@@ -118,6 +118,10 @@ ConVar mat_viewportscale( "mat_viewportscale", "1.0", FCVAR_ARCHIVE, "Scale down
 ConVar mat_viewportupscale( "mat_viewportupscale", "1", FCVAR_ARCHIVE, "Scale the viewport back up" );
 ConVar cl_leveloverview( "cl_leveloverview", "0", FCVAR_CHEAT );
 
+#ifdef HL2SB
+ConVar cl_camera_anim_intensity("cl_camera_anim_intensity", "1.0", FCVAR_ARCHIVE, "Intensity of cambone animations");
+#endif
+
 static ConVar r_mapextents( "r_mapextents", "16384", FCVAR_CHEAT, 
 						   "Set the max dimension for the map.  This determines the far clipping plane" );
 
@@ -1086,7 +1090,7 @@ void CViewRender::Render( vrect_t *rect )
 			{
 				C_BasePlayer *pViewTarget = pPlayer;
 
-				if ( pPlayer->IsObserver() && pPlayer->GetObserverMode() == OBS_MODE_IN_EYE )
+				if ( pPlayer->IsObserver() && pPlayer->GetObserverMode() == OBS_MODE_INEYE )
 				{
 					pViewTarget = dynamic_cast<C_BasePlayer*>( pPlayer->GetObserverTarget() );
 				}
@@ -1217,6 +1221,39 @@ void CViewRender::Render( vrect_t *rect )
 			    }
 		    }
 	    }
+
+#ifdef HL2SB
+	//--------------------------------
+	// Handle camera anims
+	//--------------------------------
+	if (!UseVR() && pPlayer && cl_camera_anim_intensity.GetFloat() > 0)
+	{
+		if (pPlayer->GetViewModel(0))
+		{
+			int attachment = pPlayer->GetViewModel(0)->LookupAttachment("camera");
+			if (attachment != -1)
+			{
+				int rootBone = pPlayer->GetViewModel(0)->LookupAttachment("camera_root");
+				Vector cameraOrigin = Vector(0, 0, 0);
+				QAngle cameraAngles = QAngle(0, 0, 0);
+				Vector rootOrigin = Vector(0, 0, 0);
+				QAngle rootAngles = QAngle(0, 0, 0);
+				pPlayer->GetViewModel(0)->GetAttachmentLocal(attachment, cameraOrigin, cameraAngles);
+				if (rootBone != -1)
+				{
+					pPlayer->GetViewModel(0)->GetAttachmentLocal(rootBone, rootOrigin, rootAngles);
+					cameraOrigin -= rootOrigin;
+					cameraAngles -= rootAngles;
+#if 0 // i'm tired of seeing these
+					DevMsg("camera attachment found\n");
+#endif
+				}
+				view.angles += cameraAngles * cl_camera_anim_intensity.GetFloat();
+				view.origin += cameraOrigin * cl_camera_anim_intensity.GetFloat();
+			}
+		}
+	}
+#endif
 
 	    // Determine if we should draw view model ( client mode override )
 	    bool drawViewModel = g_pClientMode->ShouldDrawViewModel();
