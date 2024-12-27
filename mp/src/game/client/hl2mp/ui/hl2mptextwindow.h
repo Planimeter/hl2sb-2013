@@ -53,6 +53,7 @@ private:
 
 public:
 	CHL2MPSpectatorGUI( IViewPort *pViewPort );
+	virtual ~CHL2MPSpectatorGUI() {}
 
 	virtual void Update( void );
 	virtual bool NeedsUpdate( void );

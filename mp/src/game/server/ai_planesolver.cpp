@@ -351,7 +351,12 @@ void CAI_PlaneSolver::GenerateObstacleNpcs( const AILocalMoveGoal_t &goal, float
 			}
 		}
 
+#ifdef HL2SB
+		// Zeh Matt: Ugly but pretty much fail safe due to our overload :)
+		CBaseEntity *pPlayer = AI_GetNearestPlayer(m_pNpc ? m_pNpc->GetAbsOrigin() : vec3_origin);
+#else
 		CBaseEntity *pPlayer = UTIL_PlayerByIndex( 1 );
+#endif
 		if ( pPlayer )
 		{
 			Vector mins, maxs;

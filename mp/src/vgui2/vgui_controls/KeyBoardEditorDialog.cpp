@@ -97,6 +97,10 @@ public:
 	{
 	}
 
+	virtual ~CInlineEditPanel()
+	{
+	}
+
 	virtual void Paint()
 	{
 		int wide, tall;

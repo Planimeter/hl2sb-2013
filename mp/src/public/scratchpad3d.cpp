@@ -529,6 +529,8 @@ void CScratchPad3D::DrawPolygonsForPixels(
 		vTopRight = vTopLeft + vTopXInc;
 		vBottomRight = vBottomLeft + vBottomXInc;
 
+#pragma warning( push )
+#pragma warning( disable : 6011 )
 		SPRGBA *pSrc = &pData[ y * (pitchInBytes/sizeof(SPRGBA)) ];
 		for( int x=0; x < width; x++ )
 		{
@@ -543,6 +545,7 @@ void CScratchPad3D::DrawPolygonsForPixels(
 			vBottomLeft += vBottomXInc;
 			vBottomRight += vBottomXInc;
 		}
+#pragma warning( pop )
 
 		vCurLeft += vLeftInc;
 		vNextLeft += vLeftInc;
@@ -632,4 +635,3 @@ IScratchPad3D* ScratchPad3D_Create( char const *pFilename )
 	return pRet;
 }
 #endif // POSIX
-

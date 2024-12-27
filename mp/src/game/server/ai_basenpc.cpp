@@ -643,7 +643,11 @@ void CAI_BaseNPC::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, bo
 	BaseClass::Ignite( flFlameLifetime, bNPCOnly, flSize, bCalledByLevelDesigner );
 
 #ifdef HL2_EPISODIC
+#ifdef HL2SB
+	CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 	if ( pPlayer->IRelationType( this ) != D_LI )
 	{
 		CNPC_Alyx *alyx = CNPC_Alyx::GetAlyx();
@@ -777,7 +781,11 @@ int CAI_BaseNPC::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		{
 			// See if the person that injured me is an NPC.
 			CAI_BaseNPC *pAttacker = dynamic_cast<CAI_BaseNPC *>( info.GetAttacker() );
+#ifdef HL2SB
+			CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 			CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 
 			if( pAttacker && pAttacker->IsAlive() && pPlayer )
 			{
@@ -3110,7 +3118,11 @@ void CAI_BaseNPC::UpdateEfficiency( bool bInPVS )
 
 	//---------------------------------
 
-	CBasePlayer *pPlayer = AI_GetSinglePlayer(); 
+#ifdef HL2SB
+	CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
+	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 	static Vector vPlayerEyePosition;
 	static Vector vPlayerForward;
 	static int iPrevFrame = -1;
@@ -3354,7 +3366,11 @@ void CAI_BaseNPC::UpdateSleepState( bool bInPVS )
 {
 	if ( GetSleepState() > AISS_AWAKE )
 	{
+#ifdef HL2SB
+		CBasePlayer *pLocalPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 		CBasePlayer *pLocalPlayer = AI_GetSinglePlayer();
+#endif
 		if ( !pLocalPlayer )
 		{
 			if ( gpGlobals->maxClients > 1 )
@@ -3554,7 +3570,11 @@ void CAI_BaseNPC::RebalanceThinks()
 
 		int i;
 
+#ifdef HL2SB
+		CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 		CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 		Vector vPlayerForward;
 		Vector vPlayerEyePosition;
 
@@ -3835,7 +3855,11 @@ void CAI_BaseNPC::SetPlayerAvoidState( void )
 
 		GetPlayerAvoidBounds( &vMins, &vMaxs );
 
+#ifdef HL2SB
+		CBasePlayer *pLocalPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 		CBasePlayer *pLocalPlayer = AI_GetSinglePlayer();
+#endif
 
 		if ( pLocalPlayer )
 		{
@@ -4810,14 +4834,22 @@ void CAI_BaseNPC::RunAI( void )
 		}
 	}
 
+#ifdef HL2SB
+	if( ai_debug_loners.GetBool() && !IsInSquad() )
+#else
 	if( ai_debug_loners.GetBool() && !IsInSquad() && AI_IsSinglePlayer() )
+#endif
 	{
 		Vector right;
 		Vector vecPoint;
 
 		vecPoint = EyePosition() + Vector( 0, 0, 12 );
 
+#ifdef HL2SB
+		UTIL_GetNearestPlayer( GetAbsOrigin() )->GetVectors( NULL, &right, NULL );
+#else
 		UTIL_GetLocalPlayer()->GetVectors( NULL, &right, NULL );
+#endif
 
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 64 ), 255, 0, 0, false , 0.1 );
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 32 ) + right * 32, 255, 0, 0, false , 0.1 );
@@ -8677,7 +8709,12 @@ void CAI_BaseNPC::DrawDebugGeometryOverlays(void)
 
 		info.SetDamage( m_iHealth );
 		info.SetAttacker( this );
+#ifdef HL2SB
+		// Fix for multiplayer
+		info.SetInflictor( (CBaseEntity *)this );
+#else
 		info.SetInflictor( ( AI_IsSinglePlayer() ) ? (CBaseEntity *)AI_GetSinglePlayer() : (CBaseEntity *)this );
+#endif
 		info.SetDamageType( DMG_GENERIC );
 
 		m_debugOverlays &= ~OVERLAY_NPC_KILL_BIT;
@@ -9908,7 +9945,11 @@ CBaseEntity *CAI_BaseNPC::FindNamedEntity( const char *name, IEntityFindFilter *
 {
 	if ( !stricmp( name, "!player" ))
 	{
+#ifdef HL2SB
+		return ( CBaseEntity * )AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 		return ( CBaseEntity * )AI_GetSinglePlayer();
+#endif
 	}
 	else if ( !stricmp( name, "!enemy" ) )
 	{
@@ -9923,7 +9964,11 @@ CBaseEntity *CAI_BaseNPC::FindNamedEntity( const char *name, IEntityFindFilter *
 	{
 		// FIXME: look at CBaseEntity *CNPCSimpleTalker::FindNearestFriend(bool fPlayer)
 		// punt for now
+#ifdef HL2SB
+		return ( CBaseEntity * )AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 		return ( CBaseEntity * )AI_GetSinglePlayer();
+#endif
 	}
 	else if (!stricmp( name, "self" ))
 	{
@@ -9943,7 +9988,11 @@ CBaseEntity *CAI_BaseNPC::FindNamedEntity( const char *name, IEntityFindFilter *
 		{
 			DevMsg( "ERROR: \"player\" is no longer used, use \"!player\" in vcd instead!\n" );
 		}
+#ifdef HL2SB
+		return ( CBaseEntity * )AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 		return ( CBaseEntity * )AI_GetSinglePlayer();
+#endif
 	}
 	else
 	{
@@ -11916,7 +11965,11 @@ bool CAI_BaseNPC::CineCleanup()
 			{
 				SetLocalOrigin( origin );
 
+#ifdef HL2SB
+				int drop = UTIL_DropToFloor( this, MASK_NPCSOLID, AI_GetNearestVisiblePlayer( this ) );
+#else
 				int drop = UTIL_DropToFloor( this, MASK_NPCSOLID, UTIL_GetLocalPlayer() );
+#endif
 
 				// Origin in solid?  Set to org at the end of the sequence
 				if ( ( drop < 0 ) || sv_test_scripted_sequences.GetBool() )
@@ -11993,7 +12046,11 @@ void CAI_BaseNPC::Teleport( const Vector *newPosition, const QAngle *newAngles, 
 
 bool CAI_BaseNPC::FindSpotForNPCInRadius( Vector *pResult, const Vector &vStartPos, CAI_BaseNPC *pNPC, float radius, bool bOutOfPlayerViewcone )
 {
+#ifdef HL2SB
+	CBasePlayer *pPlayer = AI_GetNearestPlayer( pNPC->GetAbsOrigin() );
+#else
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 	QAngle fan;
 
 	fan.x = 0;
@@ -12529,11 +12586,15 @@ bool CAI_BaseNPC::IsPlayerAlly( CBasePlayer *pPlayer )
 	{
 		// in multiplayer mode we need a valid pPlayer 
 		// or override this virtual function
+#ifndef HL2SB
 		if ( !AI_IsSinglePlayer() )
 			return false;
 
 		// NULL means single player mode
 		pPlayer = UTIL_GetLocalPlayer();
+#else
+		pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
+#endif
 	}
 
 	return ( !pPlayer || IRelationType( pPlayer ) == D_LI ); 
@@ -12827,7 +12888,11 @@ bool CAI_BaseNPC::FindNearestValidGoalPos( const Vector &vTestPoint, Vector *pRe
 
 	if ( vCandidate != vec3_invalid )
 	{
+#ifdef HL2SB
+		AI_Waypoint_t *pPathToPoint = GetPathfinder()->BuildRoute( GetAbsOrigin(), vCandidate, AI_GetNearestPlayer( GetAbsOrigin() ), 5*12, NAV_NONE, true );
+#else
 		AI_Waypoint_t *pPathToPoint = GetPathfinder()->BuildRoute( GetAbsOrigin(), vCandidate, AI_GetSinglePlayer(), 5*12, NAV_NONE, true );
+#endif
 		if ( pPathToPoint )
 		{
 			GetPathfinder()->UnlockRouteNodes( pPathToPoint );

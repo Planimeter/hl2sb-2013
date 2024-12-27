@@ -1,0 +1,14 @@
+diff a/mp/src/game/server/triggers.cpp b/mp/src/game/server/triggers.cpp	(rejected hunks)
+@@ -3127,7 +3177,12 @@ void CTriggerCamera::Disable( void )
+ 	}
+ 
+ 	//return the player to previous takedamage state
++#ifndef HL2SB
+ 	m_hPlayer->m_takedamage = m_nOldTakeDamage;
++#else
++	if ( m_nOldTakeDamage != -1 )
++		m_hPlayer->m_takedamage = m_nOldTakeDamage;
++#endif
+ 
+ 	m_state = USE_OFF;
+ 	m_flReturnTime = gpGlobals->curtime;

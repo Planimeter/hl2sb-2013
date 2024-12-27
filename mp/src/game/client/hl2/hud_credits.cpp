@@ -61,6 +61,7 @@ class CHudCredits : public CHudElement, public vgui::Panel
 
 public:
 	CHudCredits( const char *pElementName );
+	virtual ~CHudCredits() {}
 	virtual void Init( void );
 	virtual void LevelShutdown( void );
 
@@ -141,7 +142,11 @@ void CHudCredits::PrepareCredits( const char *pKeyName )
 	Clear();
 
 	KeyValues *pKV= new KeyValues( "CreditsFile" );
+#ifndef HL2SB
 	if ( !pKV->LoadFromFile( filesystem, CREDITS_FILE, "MOD" ) )
+#else
+	if ( !pKV->LoadFromFile( filesystem, CREDITS_FILE, "GAME" ) )
+#endif
 	{
 		pKV->deleteThis();
 

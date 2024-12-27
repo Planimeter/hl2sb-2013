@@ -88,6 +88,7 @@ class CSpecButton : public Button
 {
 public:
 	CSpecButton(Panel *parent, const char *panelName): Button(parent, panelName, "") {}
+	virtual ~CSpecButton() {}
 
 private:
 	void ApplySchemeSettings(vgui::IScheme *pScheme)

@@ -93,6 +93,10 @@ protected:
 			SetSizeable(false);
 			SetProportional(true);
 		}
+
+		virtual ~CBackGroundPanel()
+		{
+		}
 	private:
 
 		virtual void ApplySchemeSettings(IScheme *pScheme)

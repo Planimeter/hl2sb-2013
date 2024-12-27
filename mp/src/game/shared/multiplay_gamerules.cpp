@@ -358,7 +358,52 @@ ConVarRef suitcharger( "sk_suitcharger" );
 #endif
 	}
 
+#endif
+#ifdef LUA_SDK
+	//=========================================================
+	//=========================================================
+	void CMultiplayRules::Think ( void )
+	{
+#ifndef CLIENT_DLL
+		BaseClass::Think();
+		
+		///// Check game rules /////
 
+		if ( g_fGameOver )   // someone else quit the game already
+		{
+			// Tony; wait for intermission to end
+			if ( m_flIntermissionEndTime && ( m_flIntermissionEndTime < gpGlobals->curtime ) )
+				ChangeLevel(); // intermission is over
+			return;
+		}
+
+		float flTimeLimit = mp_timelimit.GetFloat() * 60;
+		float flFragLimit = fraglimit.GetFloat();
+		
+		if ( flTimeLimit != 0 && gpGlobals->curtime >= flTimeLimit )
+		{
+			GoToIntermission();
+			return;
+		}
+
+		if ( flFragLimit )
+		{
+			// check if any player is over the frag limit
+			for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+			{
+				CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+				if ( pPlayer && pPlayer->FragCount() >= flFragLimit )
+				{
+					GoToIntermission();
+					return;
+				}
+			}
+		}
+#endif
+	}
+#else
+#ifndef CLIENT_DLL
 	//=========================================================
 	//=========================================================
 	void CMultiplayRules::Think ( void )
@@ -443,6 +488,9 @@ ConVarRef suitcharger( "sk_suitcharger" );
 			}
 		}
 	}
+#endif
+#endif
+#ifndef CLIENT_DLL
 
 
 	//=========================================================
@@ -1889,4 +1937,52 @@ ConVarRef suitcharger( "sk_suitcharger" );
 		return iNumItems > 0;
 	}
 
+#endif
+
+#ifndef CLIENT_DLL
+	//=========================================================
+	//=========================================================
+	void CMultiplayRules::FrameUpdatePostEntityThink()
+	{
+		BaseClass::FrameUpdatePostEntityThink();
+
+		float flNow = Plat_FloatTime();
+
+		// Update time when client was last connected
+		if (m_flTimeLastMapChangeOrPlayerWasConnected <= 0.0f)
+		{
+			m_flTimeLastMapChangeOrPlayerWasConnected = flNow;
+		}
+		else
+		{
+			for (int iPlayerIndex = 1; iPlayerIndex <= MAX_PLAYERS; iPlayerIndex++)
+			{
+				player_info_t pi;
+				if (!engine->GetPlayerInfo(iPlayerIndex, &pi))
+					continue;
+#if defined( REPLAY_ENABLED )
+				if (pi.ishltv || pi.isreplay || pi.fakeplayer)
+#else
+				if (pi.ishltv || pi.fakeplayer)
+#endif
+					continue;
+
+				m_flTimeLastMapChangeOrPlayerWasConnected = flNow;
+				break;
+			}
+		}
+
+		// Check if we should cycle the map because we've been empty
+		// for long enough
+		if (mp_mapcycle_empty_timeout_seconds.GetInt() > 0)
+		{
+			int iIdleSeconds = (int)(flNow - m_flTimeLastMapChangeOrPlayerWasConnected);
+			if (iIdleSeconds >= mp_mapcycle_empty_timeout_seconds.GetInt())
+			{
+
+				Log("Server has been empty for %d seconds on this map, cycling map as per mp_mapcycle_empty_timeout_seconds\n", iIdleSeconds);
+				ChangeLevel();
+			}
+		}
+	}
 #endif

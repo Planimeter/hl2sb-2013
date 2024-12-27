@@ -892,7 +892,10 @@ public:
 
 		if ( nJobs > 1 )
 		{
+#pragma warning( push )
+#pragma warning( disable : 6255 )
 			CJob **jobs = (CJob **)stackalloc( nJobs * sizeof(CJob **) );
+#pragma warning( pop )
 			int i = nJobs;
 
 			while( i-- )

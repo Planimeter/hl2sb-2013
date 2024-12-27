@@ -54,6 +54,10 @@
 	#include "portal_shareddefs.h"
 #endif
 
+#ifdef HL2SB
+#include "hl2mp_gamerules.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -1531,7 +1535,11 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 
 #ifdef HL2_EPISODIC
 	// Burning corpses are server-side in episodic, if we're in darkness mode
+#ifndef HL2SB
 	if ( IsOnFire() && HL2GameRules()->IsAlyxInDarknessMode() )
+#else
+	if ( IsOnFire() && HL2MPRules()->IsAlyxInDarknessMode() )
+#endif
 	{
 		CBaseEntity *pRagdoll = CreateServerRagdoll( this, m_nForceBone, newinfo, COLLISION_GROUP_DEBRIS );
 		FixupBurningServerRagdoll( pRagdoll );
@@ -1546,6 +1554,9 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 #if !defined( HL2MP )
 	bMegaPhyscannonActive = HL2GameRules()->MegaPhyscannonActive();
 #endif // !HL2MP
+#if defined( HL2SB )
+	bMegaPhyscannonActive = HL2MPRules()->MegaPhyscannonActive();
+#endif // HL2SB
 
 	// Mega physgun requires everything to be a server-side ragdoll
 	if ( m_bForceServerRagdoll == true || ( ( bMegaPhyscannonActive == true ) && !IsPlayer() && Classify() != CLASS_PLAYER_ALLY_VITAL && Classify() != CLASS_PLAYER_ALLY ) )
@@ -3108,6 +3119,12 @@ void CBaseCombatCharacter::VPhysicsShadowCollision( int index, gamevcollisioneve
 		flOtherAttackerTime = 1.0f;
 	}
 #endif // HL2_DLL && !HL2MP
+#if defined( HL2_DLL ) && defined( HL2SB )
+	if ( HL2MPRules()->MegaPhyscannonActive() == true )
+	{
+		flOtherAttackerTime = 1.0f;
+	}
+#endif // HL2_DLL && HL2SB
 
 	if ( this == pOther->HasPhysicsAttacker( flOtherAttackerTime ) )
 		return;
@@ -3274,7 +3291,11 @@ CBaseEntity *CBaseCombatCharacter::FindMissTarget( void )
 	CBaseEntity *pMissCandidates[ MAX_MISS_CANDIDATES ];
 	int numMissCandidates = 0;
 
+#ifdef HL2SB
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
+#else
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+#endif
 	CBaseEntity *pEnts[256];
 	Vector		radius( 100, 100, 100);
 	Vector		vecSource = GetAbsOrigin();
@@ -3589,4 +3610,3 @@ float CBaseCombatCharacter::GetTimeSinceLastInjury( int team /*= TEAM_ANY */ ) c
 
 	return never;
 }
-

@@ -15,8 +15,8 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp"
-		$PreprocessorDefinitions		"$BASE;HL2MP;HL2_DLL"
+		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,$SRCDIR\game\shared\episodic,.\hl2,.\episodic,.\hl2mp,$SRCDIR\game\shared\hl2mp,$SRCDIR\thirdparty\lua-5.1.5\etc,$SRCDIR\thirdparty\lua-5.1.5\src"
+		$PreprocessorDefinitions		"$BASE;HL2MP;HL2_DLL;HL2_EPISODIC;ARGG;LUA_SDK;HL2SB"
 	}
 }
 
@@ -70,6 +70,12 @@ $Project "Server (HL2MP)"
 			$File	"hl2\ai_behavior_functank.h"
 			$File	"hl2\ai_behavior_holster.cpp"
 			$File	"hl2\ai_behavior_holster.h"
+			$File	"hl2\ai_behavior_operator.cpp"
+			$File	"hl2\ai_behavior_operator.h"
+			$File	"ai_behavior_passenger.cpp"
+			$File	"ai_behavior_passenger.h"
+			$File	"episodic\ai_behavior_passenger_companion.cpp"
+			$File	"episodic\ai_behavior_passenger_companion.h"
 			$File	"hl2\ai_behavior_police.cpp"
 			$File	"hl2\ai_behavior_police.h"
 			$File	"hl2\ai_goal_police.cpp"
@@ -114,6 +120,8 @@ $Project "Server (HL2MP)"
 			$File	"hl2\grenade_bugbait.h"
 			$File	"hl2\grenade_frag.cpp"
 			$File	"hl2\grenade_frag.h"
+			$File	"hl2\grenade_spit.cpp"
+			$File	"hl2\grenade_spit.h"
 			$File	"hl2\hl2_ai_network.cpp"
 			$File	"hl2\hl2_eventlog.cpp"
 			$File	"$SRCDIR\game\shared\hl2\hl2_gamerules.cpp"
@@ -130,6 +138,7 @@ $Project "Server (HL2MP)"
 			$File	"$SRCDIR\game\shared\hl2\hl_gamemovement.h"
 			$File	"$SRCDIR\game\shared\hl2\hl_movedata.h"
 			$File	"hl2\hl_playermove.cpp"
+			$File	"hl2\info_darknessmode_lightsource.cpp"
 			$File	"hl2\info_teleporter_countdown.cpp"
 			$File	"hl2\item_ammo.cpp"
 			$File	"hl2\item_battery.cpp"
@@ -140,8 +149,8 @@ $Project "Server (HL2MP)"
 			$File	"hl2\item_suit.cpp"
 			$File	"hl2\look_door.cpp"
 			$File	"hl2\monster_dummy.cpp"
-			$File	"hl2\npc_alyx.cpp"
-			$File	"hl2\npc_alyx.h"
+			$File	"hl2\npc_alyx_episodic.cpp"
+			$File	"hl2\npc_alyx_episodic.h"
 			$File	"hl2\npc_antlion.cpp"
 			$File	"hl2\npc_antlion.h"
 			$File	"hl2\npc_antlionguard.cpp"
@@ -291,6 +300,15 @@ $Project "Server (HL2MP)"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_smg1.cpp"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_stunstick.cpp"
 			}
+		}
+
+		$Folder "HL2SB"
+		{
+			$File	"$SRCDIR\game\shared\mountsteamcontent.cpp"
+			$File	"$SRCDIR\game\shared\mountsteamcontent.h"
+			$File	"$SRCDIR\game\shared\hl2mp\weapon_physgun.cpp"
+			// $File	"$SRCDIR\game\shared\hl2mp\weapon_physgun_argg.cpp"
+			// $File	"$SRCDIR\game\shared\hl2mp\weapon_physgun_valve.cpp"
 		}
 	}
 }

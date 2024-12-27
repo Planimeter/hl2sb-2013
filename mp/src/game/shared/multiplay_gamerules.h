@@ -112,8 +112,17 @@ public:
 #ifndef CLIENT_DLL
 	virtual void FrameUpdatePostEntityThink();
 
+#endif
+#ifdef LUA_SDK
 // GR_Think
 	virtual void Think( void );
+#else
+#ifndef CLIENT_DLL
+// GR_Think
+	virtual void Think( void );
+#endif
+#endif
+#ifndef CLIENT_DLL
 	virtual void RefreshSkillData( bool forceUpdate );
 	virtual bool IsAllowedToSpawn( CBaseEntity *pEntity );
 	virtual bool FAllowFlashlight( void );

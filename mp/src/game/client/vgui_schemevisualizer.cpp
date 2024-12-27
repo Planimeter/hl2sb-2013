@@ -23,6 +23,7 @@ class CBorderVisualizerPanel : public Panel
 	DECLARE_CLASS_SIMPLE( CBorderVisualizerPanel, Panel );
 public:
 	CBorderVisualizerPanel( Panel *pParent, const char *pName, IBorder *pBorder );
+	virtual ~CBorderVisualizerPanel() {}
 
 private:
 	virtual void Paint();
@@ -55,6 +56,7 @@ class CColorVisualizerPanel : public Panel
 	DECLARE_CLASS_SIMPLE( CColorVisualizerPanel, Panel );
 public:
 	CColorVisualizerPanel( Panel *pParent, const char *pName, const Color &color );
+	virtual ~CColorVisualizerPanel() {}
 
 private:
 	virtual void Paint();

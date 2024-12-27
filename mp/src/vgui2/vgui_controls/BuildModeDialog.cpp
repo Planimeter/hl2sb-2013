@@ -58,6 +58,10 @@ public:
 	{
 	}
 
+	virtual ~CSmallTextEntry()
+	{
+	}
+
 	virtual void ApplySchemeSettings( IScheme *scheme )
 	{
 		BaseClass::ApplySchemeSettings( scheme );
@@ -134,6 +138,10 @@ public:
 		}
 	}
 #pragma warning( default : 4355 )
+
+	virtual ~BuildModeLocalizedStringEditDialog()
+	{
+	}
 
 	virtual void DoModal(const char *token)
 	{
@@ -292,6 +300,10 @@ public:
 		m_bParents( getParents )
 	{
 		m_hContext = context;
+	}
+
+	virtual ~CBuildModeNavCombo()
+	{
 	}
 	
 	virtual void OnShowMenu(Menu *menu)

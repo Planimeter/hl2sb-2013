@@ -160,7 +160,7 @@ $Configuration "Release"
 		$SuppressStartupBanner				"Yes (/NOLOGO)"
 		$IgnoreImportLibrary
 		$RegisterOutput
-		$AdditionalLibraryDirectories		"$LIBCOMMON;$LIBPUBLIC"
+		$AdditionalLibraryDirectories		"$LIBCOMMON;$LIBPUBLIC;$SRCDIR\thirdparty\lua-5.1.5\src"
 		$LinkLibraryDependencies
 		$UseLibraryDependencyInputs
 		$UseUNICODEResponseFiles			"No"

@@ -32,6 +32,7 @@ class CTargetID : public CHudElement, public vgui::Panel
 
 public:
 	CTargetID( const char *pElementName );
+	virtual ~CTargetID() {}
 	void Init( void );
 	virtual void	ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void	Paint( void );

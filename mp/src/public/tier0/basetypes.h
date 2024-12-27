@@ -201,7 +201,10 @@ inline unsigned long FloatAbsBits( vec_t f )
 #ifndef _In_
 #define _In_
 #endif
+#pragma warning( push )
+#pragma warning( disable : 28252 )
 extern "C" float fabsf(_In_ float);
+#pragma warning( pop )
 #else
 #include <math.h>
 #endif

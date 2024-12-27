@@ -39,6 +39,10 @@
 #include "hl2_player.h"
 #endif
 
+#ifdef LUA_SDK
+#include "luamanager.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -1391,6 +1395,17 @@ bool CChangeLevel::KeyValue( const char *szKeyName, const char *szValue )
 			Assert(0);
 		}
 		Q_strncpy(m_szMapName, szValue, sizeof(m_szMapName));
+#ifdef LUA_SDK
+		if (m_nTableReference == LUA_NOREF)
+		{
+			lua_newtable(L);
+			m_nTableReference = luaL_ref(L, LUA_REGISTRYINDEX);
+		}
+		lua_getref(L, m_nTableReference);
+		lua_pushstring(L, m_szMapName);
+		lua_setfield(L, -2, "m_szMapName");
+		lua_pop(L, 1);
+#endif
 	}
 	else if (FStrEq(szKeyName, "landmark"))
 	{
@@ -1401,6 +1416,17 @@ bool CChangeLevel::KeyValue( const char *szKeyName, const char *szValue )
 		}
 		
 		Q_strncpy(m_szLandmarkName, szValue, sizeof( m_szLandmarkName ));
+#ifdef LUA_SDK
+		if (m_nTableReference == LUA_NOREF)
+		{
+			lua_newtable(L);
+			m_nTableReference = luaL_ref(L, LUA_REGISTRYINDEX);
+		}
+		lua_getref(L, m_nTableReference);
+		lua_pushstring(L, m_szLandmarkName);
+		lua_setfield(L, -2, "m_szLandmarkName");
+		lua_pop(L, 1);
+#endif
 	}
 	else
 		return BaseClass::KeyValue( szKeyName, szValue );
@@ -1507,6 +1533,14 @@ void CChangeLevel::InputChangeLevel( inputdata_t &inputdata )
 		if ( pPlayer && ( !pPlayer->IsAlive() || pPlayer->GetBonusChallenge() > 0 ) )
 			return;
 	}
+#ifdef HL2SB
+	else
+	{
+		CBasePlayer *pPlayer = inputdata.pActivator->IsPlayer() ? (CBasePlayer *)inputdata.pActivator : NULL;
+		if ( pPlayer && ( !pPlayer->IsAlive() || pPlayer->GetBonusChallenge() > 0 ) )
+			return;
+	}
+#endif
 
 	ChangeLevelNow( inputdata.pActivator );
 }
@@ -1594,9 +1628,11 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 
 	Assert(!FStrEq(m_szMapName, ""));
 
+// #ifndef HL2SB
 	// Don't work in deathmatch
 	if ( g_pGameRules->IsDeathmatch() )
 		return;
+// #endif
 
 	// Some people are firing these multiple times in a frame, disable
 	if ( m_bTouched )
@@ -1604,7 +1640,13 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 
 	m_bTouched = true;
 
+#ifdef HL2SB
+	CBasePlayer *pPlayer = (pActivator && pActivator->IsPlayer()) ? ToBasePlayer( pActivator ) : UTIL_GetLocalPlayer();
+	if( !pPlayer )
+		return;
+#else
 	CBaseEntity *pPlayer = (pActivator && pActivator->IsPlayer()) ? pActivator : UTIL_GetLocalPlayer();
+#endif
 
 	int transitionState = InTransitionVolume(pPlayer, m_szLandmarkName);
 	if ( transitionState == TRANSITION_VOLUME_SCREENED_OUT )
@@ -2957,6 +2999,10 @@ void CTriggerCamera::Spawn( void )
 	SetRenderColorA( 0 );								// The engine won't draw this model if this is set to 0 and blending is on
 	m_nRenderMode = kRenderTransTexture;
 
+#ifdef HL2SB
+	m_nOldTakeDamage = -1;
+#endif
+
 	m_state = USE_OFF;
 	
 	m_initialSpeed = m_flSpeed;
@@ -3038,7 +3084,11 @@ void CTriggerCamera::Enable( void )
 
 	if ( !m_hPlayer || !m_hPlayer->IsPlayer() )
 	{
+#ifdef HL2SB
+		m_hPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
+#else
 		m_hPlayer = UTIL_GetLocalPlayer();
+#endif
 	}
 
 	if ( !m_hPlayer )

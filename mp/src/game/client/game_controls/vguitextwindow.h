@@ -92,6 +92,7 @@ protected:
 	
 	public:
 		CMOTDHTML( Panel *parent, const char *pchName ) : vgui::HTML( parent, pchName ) {}
+		virtual ~CMOTDHTML() {}
 		virtual bool OnStartRequest( const char *url, const char *target, const char *pchPostData, bool bIsRedirect ) OVERRIDE;
 	};
 	CMOTDHTML		*m_pHTMLMessage;

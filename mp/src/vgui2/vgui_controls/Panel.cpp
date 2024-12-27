@@ -159,6 +159,7 @@ class CDragDropHelperPanel : public Panel
 	DECLARE_CLASS_SIMPLE( CDragDropHelperPanel, Panel );
 public:
 	CDragDropHelperPanel();
+	virtual ~CDragDropHelperPanel() {}
 
 	virtual VPANEL IsWithinTraverse(int x, int y, bool traversePopups);
 	virtual void PostChildPaint();
@@ -3538,7 +3539,7 @@ bool Panel::RequestFocusNext(VPANEL panel)
 void Panel::RequestFocus(int direction)
 {
 	// NOTE: This doesn't make any sense if we don't have keyboard input enabled
-	Assert( ( IsX360() || IsConsoleStylePanel() ) || IsKeyBoardInputEnabled() );
+	// Assert( ( IsX360() || IsConsoleStylePanel() ) || IsKeyBoardInputEnabled() );
 	//	ivgui()->DPrintf2("RequestFocus(%s, %s)\n", GetName(), GetClassName());
 	OnRequestFocus(GetVPanel(), NULL);
 }
@@ -8581,7 +8582,7 @@ PanelKeyBindingMap *CPanelKeyBindingMapDictionary::FindOrAddPanelKeyBindingMap( 
 
 	PanelKeyBindingMapDictionaryEntry entry;
 	// use the alloc in place method of new
-	entry.map = new (m_PanelKeyBindingMapPool.Alloc(sizeof(PanelKeyBindingMap))) PanelKeyBindingMap;
+    entry.map = new (m_PanelKeyBindingMapPool.Alloc(sizeof(PanelKeyBindingMap))) PanelKeyBindingMap();
 	Construct(entry.map);
 	m_MessageMaps.Insert( StripNamespace( className ), entry );
 	return entry.map;

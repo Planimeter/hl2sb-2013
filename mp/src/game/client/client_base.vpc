@@ -51,7 +51,7 @@ $Configuration
 
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include"
+		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include;.\scripted_controls"
 		$PreprocessorDefinitions		"$BASE;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead" 
 		$PreprocessorDefinitions		"$BASE;fopen=dont_use_fopen" [$WIN32]
 		$PreprocessorDefinitions		"$BASE;USE_WEBM_FOR_REPLAY;" [$LINUXALL]
@@ -67,8 +67,9 @@ $Configuration
 		$SystemFrameworks				"Carbon" [$OSXALL]
 		$SystemLibraries				"rt" [$LINUXALL]
 		$IgnoreImportLibrary			"TRUE"
-		$AdditionalDependencies			"$BASE winmm.lib"	[$WIN32]
+		$AdditionalDependencies			"$BASE winmm.lib legacy_stdio_definitions.lib lua51.lib"	[$WIN32]
 		$AdditionalDependencies			"$BASE wsock32.lib Ws2_32.lib" [$BUILD_REPLAY]
+		$ForceFileOutput				"Multiply Defined Symbol Only (/FORCE:MULTIPLE)" [$VS2022]
 	}
 }
 
@@ -382,6 +383,8 @@ $Project
 		$File	"matrixproxy.cpp"
 		$File	"menu.cpp"
 		$File	"message.cpp"
+		$File	"$SRCDIR\game\shared\mountaddons.cpp"
+		$File	"$SRCDIR\game\shared\mountaddons.h"
 		$File	"movehelper_client.cpp"
 		$File	"$SRCDIR\game\shared\movevars_shared.cpp"
 		$File	"$SRCDIR\game\shared\multiplay_gamerules.cpp"
@@ -654,6 +657,124 @@ $Project
 			$File	"game_controls\teammenu.cpp"
 			$File	"game_controls\vguitextwindow.cpp"
 			$File	"game_controls\IconPanel.cpp"
+		}
+
+		$Folder	"Lua"
+		{
+			$File	"hl2\vgui_rootpanel_hl2.h"
+			$File	"lc_baseanimating.cpp"
+			$File	"lc_baseanimating.h"
+			$File	"lc_baseentity.cpp"
+			$File	"lc_baseplayer.cpp"
+			$File	"lc_recipientfilter.cpp"
+			$File	"lc_recipientfilter.h"
+			$File	"lcdll_util.cpp"
+			$File	"liclientshadowmgr.cpp"
+			$File	"lprediction.cpp"
+			$File	"scripted_controls\lButton.cpp"
+			$File	"scripted_controls\lButton.h"
+			$File	"scripted_controls\lCheckButton.cpp"
+			$File	"scripted_controls\lCheckButton.h"
+			$File	"scripted_controls\lFrame.cpp"
+			$File	"scripted_controls\lFrame.h"
+			$File	"scripted_controls\lPanel.cpp"
+			$File	"scripted_controls\lPanel.h"
+			$File	"scripted_controls\lPropertyDialog.cpp"
+			$File	"scripted_controls\lPropertyDialog.h"
+			$File	"scripted_controls\lPropertyPage.cpp"
+			$File	"scripted_controls\lPropertyPage.h"
+			$File	"scripted_controls\scriptedclientluapanel.cpp"
+			$File	"scripted_controls\scriptedclientluapanel.h"
+			$File	"scripted_controls\scriptedhudviewport.cpp"
+			$File	"scripted_controls\scriptedhudviewport.h"
+			$File	"$SRCDIR\game\shared\basescripted.cpp"
+			$File	"$SRCDIR\game\shared\basescripted.h"
+			$File	"$SRCDIR\game\shared\hl2mp\lhl2mp_player_shared.cpp"
+			$File	"$SRCDIR\game\shared\hl2mp\lhl2mp_player_shared.h"
+			$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbase_scriptedweapon.cpp"
+			$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbase_scriptedweapon.h"
+			$File	"$SRCDIR\game\shared\lbasecombatweapon_shared.cpp"
+			$File	"$SRCDIR\game\shared\lbasecombatweapon_shared.h"
+			$File	"$SRCDIR\game\shared\lbaseentity_shared.cpp"
+			$File	"$SRCDIR\game\shared\lbaseentity_shared.h"
+			$File	"$SRCDIR\game\shared\lbaseplayer_shared.cpp"
+			$File	"$SRCDIR\game\shared\lbaseplayer_shared.h"
+			$File	"$SRCDIR\game\shared\leffect_dispatch_data.cpp"
+			$File	"$SRCDIR\game\shared\leffect_dispatch_data.h"
+			$File	"$SRCDIR\game\shared\limovehelper.cpp"
+			$File	"$SRCDIR\game\shared\limovehelper.h"
+			$File	"$SRCDIR\game\shared\lin_buttons.cpp"
+			$File	"$SRCDIR\game\shared\lipredictionsystem.cpp"
+			$File	"$SRCDIR\game\shared\lshareddefs.cpp"
+			$File	"$SRCDIR\game\shared\lshareddefs.h"
+			$File	"$SRCDIR\game\shared\lsrcinit.cpp"
+			$File	"$SRCDIR\game\shared\ltakedamageinfo.cpp"
+			$File	"$SRCDIR\game\shared\ltakedamageinfo.h"
+			$File	"$SRCDIR\game\shared\luacachefile.cpp"
+			$File	"$SRCDIR\game\shared\luacachefile.h"
+			$File	"$SRCDIR\game\shared\luamanager.cpp"
+			$File	"$SRCDIR\game\shared\luamanager.h"
+			$File	"$SRCDIR\game\shared\luasrclib.h"
+			$File	"$SRCDIR\game\shared\lutil_shared.cpp"
+			$File	"$SRCDIR\game\shared\mountaddons.cpp"
+			$File	"$SRCDIR\game\shared\mountaddons.h"
+			$File	"$SRCDIR\public\XUnzip_src.cpp"
+			$File	"$SRCDIR\public\engine\livdebugoverlay.cpp"
+			$File	"$SRCDIR\public\lColor.cpp"
+			$File	"$SRCDIR\public\lColor.h"
+			$File	"$SRCDIR\public\lbspflags.cpp"
+			$File	"$SRCDIR\public\lcdll_int.cpp"
+			$File	"$SRCDIR\public\lcmodel.h"
+			$File	"$SRCDIR\public\leiface.cpp"
+			$File	"$SRCDIR\public\lfilesystem.cpp"
+			$File	"$SRCDIR\public\lfilesystem.h"
+			$File	"$SRCDIR\public\lgametrace.cpp"
+			$File	"$SRCDIR\public\lgametrace.h"
+			$File	"$SRCDIR\public\lglobalvars_base.cpp"
+			$File	"$SRCDIR\public\licvar.cpp"
+			$File	"$SRCDIR\public\licvar.h"
+			$File	"$SRCDIR\public\lienginevgui.cpp"
+			$File	"$SRCDIR\public\linetchannelinfo.cpp"
+			$File	"$SRCDIR\public\linetchannelinfo.h"
+			$File	"$SRCDIR\public\lnetworkstringtabledefs.cpp"
+			$File	"$SRCDIR\public\lnetworkstringtabledefs.h"
+			$File	"$SRCDIR\public\lvphysics_interface.cpp"
+			$File	"$SRCDIR\public\lvphysics_interface.h"
+			$File	"$SRCDIR\public\materialsystem\limaterial.cpp"
+			$File	"$SRCDIR\public\materialsystem\limaterial.h"
+			$File	"$SRCDIR\public\mathlib\lmathlib.cpp"
+			$File	"$SRCDIR\public\mathlib\lmathlib.h"
+			$File	"$SRCDIR\public\mathlib\lvector.cpp"
+			$File	"$SRCDIR\public\mathlib\lvector.h"
+			$File	"$SRCDIR\public\mathlib\lvmatrix.cpp"
+			$File	"$SRCDIR\public\mathlib\lvmatrix.h"
+			$File	"$SRCDIR\public\soundemittersystem\lisoundemittersystembase.cpp"
+			$File	"$SRCDIR\public\soundemittersystem\lisoundemittersystembase.h"
+			$File	"$SRCDIR\public\steam\listeamfriends.cpp"
+			$File	"$SRCDIR\public\steam\listeamfriends.h"
+			$File	"$SRCDIR\public\steam\lsteam_api.cpp"
+			$File	"$SRCDIR\public\tier0\ldbg.cpp"
+			$File	"$SRCDIR\public\tier1\LKeyValues.cpp"
+			$File	"$SRCDIR\public\tier1\LKeyValues.h"
+			$File	"$SRCDIR\public\tier1\lconvar.cpp"
+			$File	"$SRCDIR\public\tier1\lconvar.h"
+			$File	"$SRCDIR\public\tier1\liconvar.cpp"
+			$File	"$SRCDIR\public\vgui\LIInput.cpp"
+			$File	"$SRCDIR\public\vgui\LIScheme.cpp"
+			$File	"$SRCDIR\public\vgui\LIScheme.h"
+			$File	"$SRCDIR\public\vgui\LISurface.cpp"
+			$File	"$SRCDIR\public\vgui\LVGUI.cpp"
+			$File	"$SRCDIR\public\vgui\LVGUI.h"
+			$File	"$SRCDIR\public\vgui_controls\lControls.h"
+			$File	"$SRCDIR\public\vgui_controls\lEditablePanel.cpp"
+			$File	"$SRCDIR\public\vgui_controls\lEditablePanel.h"
+			$File	"$SRCDIR\public\vgui_controls\lPanel_vgui_controls.cpp"
+			$File	"$SRCDIR\public\vgui_controls\lPanel_vgui_controls.h"
+			$File	"$SRCDIR\public\vgui_controls\lvgui_controls.cpp"
+			$File	"$SRCDIR\public\vphysics\lperformance.cpp"
+			$File	"$SRCDIR\public\vphysics\lperformance.h"
+			$File	"$SRCDIR\public\vstdlib\lrandom.cpp"
+			$File	"$SRCDIR\public\zip_utils_src.cpp"
 		}
 
 	}
@@ -1242,6 +1363,7 @@ $Project
 		$Lib		bitmap
 		$Lib		choreoobjects
 		$Lib		dmxloader
+		$Lib		lua51
 		$Lib		mathlib
 		$Lib		matsys_controls
 		$Lib		particles

@@ -29,6 +29,7 @@ class CHudSquadStatus : public CHudElement, public vgui::Panel
 
 public:
 	CHudSquadStatus( const char *pElementName );
+	virtual ~CHudSquadStatus() {}
 	virtual void Init( void );
 	virtual void Reset( void );
 	virtual void OnThink( void );

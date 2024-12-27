@@ -34,6 +34,7 @@ class CHudBattery : public CHudNumericDisplay, public CHudElement
 
 public:
 	CHudBattery( const char *pElementName );
+	virtual ~CHudBattery() {}
 	void Init( void );
 	void Reset( void );
 	void VidInit( void );

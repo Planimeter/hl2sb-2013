@@ -182,6 +182,7 @@ class CHudChatHistory : public vgui::RichText
 public:
 
 	CHudChatHistory( vgui::Panel *pParent, const char *panelName );
+	virtual ~CHudChatHistory() {}
 
 	virtual void	ApplySchemeSettings(vgui::IScheme *pScheme);
 };
@@ -193,6 +194,7 @@ class CHudChatFilterButton : public vgui::Button
 public:
 
 	CHudChatFilterButton(  vgui::Panel *pParent, const char *pName, const char *pText );
+	virtual ~CHudChatFilterButton() {}
 
 	virtual void DoClick( void );
 };
@@ -204,6 +206,7 @@ class CHudChatFilterCheckButton : public vgui::CheckButton
 public:
 
 	CHudChatFilterCheckButton( vgui::Panel *pParent, const char *pName, const char *pText, int iFlag );
+	virtual ~CHudChatFilterCheckButton() {}
 
 	int		GetFilterFlag( void ) { return m_iFlag; }
 
@@ -229,6 +232,7 @@ public:
 	};
 
 	CBaseHudChat( const char *pElementName );
+	virtual ~CBaseHudChat() {}
 
 	virtual void	CreateChatInputLine( void );
 	virtual void	CreateChatLines( void );
@@ -343,6 +347,10 @@ public:
 		m_pHudChat = pChat;
 	}
 
+	virtual ~CBaseHudChatEntry()
+	{
+	}
+
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme )
 	{
 		BaseClass::ApplySchemeSettings(pScheme);
@@ -392,6 +400,7 @@ class CBaseHudChatInputLine : public vgui::Panel
 	
 public:
 	CBaseHudChatInputLine( vgui::Panel *parent, char const *panelName );
+	virtual ~CBaseHudChatInputLine() {}
 
 	void			SetPrompt( const wchar_t *prompt );
 	void			ClearEntry( void );
@@ -424,6 +433,7 @@ class CHudChatFilterPanel : public vgui::EditablePanel
 public:
 
 	CHudChatFilterPanel(  vgui::Panel *pParent, const char *pName );
+	virtual ~CHudChatFilterPanel() {}
 
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
 	MESSAGE_FUNC_PTR( OnFilterButtonChecked, "CheckButtonChecked", panel );

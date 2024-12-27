@@ -77,14 +77,14 @@ BEGIN_DATADESC( CFuncTank )
 	DEFINE_KEYFIELD( m_iBulletDamageVsPlayer, FIELD_INTEGER, "bullet_damage_vs_player" ),
 	DEFINE_KEYFIELD( m_iszMaster, FIELD_STRING, "master" ),
 	
-#ifdef HL2_EPISODIC	
+// #ifdef HL2_EPISODIC	
 	DEFINE_KEYFIELD( m_iszAmmoType, FIELD_STRING, "ammotype" ),
 	DEFINE_FIELD( m_iAmmoType, FIELD_INTEGER ),
-#else
+// #else
 	DEFINE_FIELD( m_iSmallAmmoType, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iMediumAmmoType, FIELD_INTEGER ),
 	DEFINE_FIELD( m_iLargeAmmoType, FIELD_INTEGER ),
-#endif // HL2_EPISODIC
+// #endif // HL2_EPISODIC
 
 	DEFINE_KEYFIELD( m_soundStartRotate, FIELD_SOUNDNAME, "rotatestartsound" ),
 	DEFINE_KEYFIELD( m_soundStopRotate, FIELD_SOUNDNAME, "rotatestopsound" ),
@@ -735,13 +735,13 @@ void CFuncTank::Spawn( void )
 {
 	Precache();
 
-#ifdef HL2_EPISODIC
+// #ifdef HL2_EPISODIC
 	m_iAmmoType = GetAmmoDef()->Index( STRING( m_iszAmmoType ) );
-#else
+// #else
 	m_iSmallAmmoType	= GetAmmoDef()->Index("Pistol");
 	m_iMediumAmmoType	= GetAmmoDef()->Index("SMG1");
 	m_iLargeAmmoType	= GetAmmoDef()->Index("AR2");
-#endif // HL2_EPISODIC
+// #endif // HL2_EPISODIC
 
 	SetMoveType( MOVETYPE_PUSH );  // so it doesn't get pushed by anything
 	SetSolid( SOLID_VPHYSICS );
@@ -802,6 +802,9 @@ void CFuncTank::Spawn( void )
 			if ( pProp )
 			{
 				pProp->m_bUseHitboxesForRenderBox = true;
+#ifdef HL2SB
+				pProp->m_bClientSideAnimation = false;
+#endif
 			}
 		}
 	}
@@ -2159,6 +2162,9 @@ void CFuncTank::DoMuzzleFlash( void )
 			CEffectData data;
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_nEntIndex = pAnim->entindex();
+#ifdef HL2SB
+			pAnim->GetAttachment( m_nBarrelAttachment, data.m_vOrigin );
+#endif
 			
 			// FIXME: Create a custom entry here!
 			DispatchEffect( "ChopperMuzzleFlash", data );
@@ -2170,6 +2176,9 @@ void CFuncTank::DoMuzzleFlash( void )
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_flScale = 1.0f;
 			data.m_fFlags = MUZZLEFLASH_COMBINE;
+#ifdef HL2SB
+			pAnim->GetAttachment( m_nBarrelAttachment, data.m_vOrigin );
+#endif
 
 			DispatchEffect( "MuzzleFlash", data );
 		}
@@ -2437,6 +2446,10 @@ LINK_ENTITY_TO_CLASS( func_tank, CFuncTankGun );
 //-----------------------------------------------------------------------------
 void CFuncTankGun::Fire( int bulletCount, const Vector &barrelEnd, const Vector &forward, CBaseEntity *pAttacker, bool bIgnoreSpread )
 {
+#ifdef HL2SB
+	IPredictionSystem::SuppressHostEvents( NULL );
+#endif
+
 	int i;
 
 	FireBulletsInfo_t info;
@@ -2459,7 +2472,7 @@ void CFuncTankGun::Fire( int bulletCount, const Vector &barrelEnd, const Vector 
 	info.m_pAttacker = pAttacker;
 	info.m_pAdditionalIgnoreEnt = GetParent();
 
-#ifdef HL2_EPISODIC
+#if !defined( HL2SB ) && defined( HL2_EPISODIC )
 	if ( m_iAmmoType != -1 )
 	{
 		for ( i = 0; i < bulletCount; i++ )
@@ -2490,6 +2503,10 @@ void CFuncTankGun::Fire( int bulletCount, const Vector &barrelEnd, const Vector 
 
 		default:
 		case TANK_BULLET_NONE:
+#ifdef HL2SB
+			info.m_iAmmoType = m_iAmmoType;
+			FireBullets( info );
+#endif
 			break;
 		}
 	}
@@ -2963,6 +2980,9 @@ void CFuncTankAirboatGun::DoMuzzleFlash( void )
 		data.m_nEntIndex = m_hAirboatGunModel->entindex();
 		data.m_nAttachmentIndex = m_nGunBarrelAttachment;
 		data.m_flScale = 1.0f;
+#ifdef HL2SB
+		m_hAirboatGunModel->GetAttachment( m_nGunBarrelAttachment, data.m_vOrigin );
+#endif
 		DispatchEffect( "AirboatMuzzleFlash", data );
 	}
 }
@@ -4215,7 +4235,11 @@ void CFuncTankCombineCannon::FuncTankPostThink()
 			AddSpawnFlags( SF_TANK_AIM_AT_POS );
 
 			Vector vecTargetPosition = GetTargetPosition();
+#ifdef HL2SB
+			CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 			CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 			Vector vecToPlayer = pPlayer->WorldSpaceCenter() - GetAbsOrigin();
 			vecToPlayer.NormalizeInPlace();
 
@@ -4362,6 +4386,24 @@ void CFuncTankCombineCannon::Fire( int bulletCount, const Vector &barrelEnd, con
 void CFuncTankCombineCannon::MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType )
 {
 	// If the shot passed near the player, shake the screen.
+#ifdef HL2SB
+	int			i;
+	for ( i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CBaseEntity *pPlayer = UTIL_PlayerByIndex( i );
+		Vector vecPlayer = pPlayer->EyePosition();
+
+		Vector vecNearestPoint = PointOnLineNearestPoint( vecTracerSrc, tr.endpos, vecPlayer );
+
+		float flDist = vecPlayer.DistTo( vecNearestPoint );
+
+		if( flDist >= 10.0f && flDist <= 120.0f )
+		{
+			// Don't shake the screen if we're hit (within 10 inches), but do shake if a shot otherwise comes within 10 feet.
+			UTIL_ScreenShake( vecNearestPoint, 10, 60, 0.3, 120.0f, SHAKE_START, false );
+		}
+	}
+#else
 	if( AI_IsSinglePlayer() )
 	{
 		Vector vecPlayer = AI_GetSinglePlayer()->EyePosition();
@@ -4376,6 +4418,7 @@ void CFuncTankCombineCannon::MakeTracer( const Vector &vecTracerSrc, const trace
 			UTIL_ScreenShake( vecNearestPoint, 10, 60, 0.3, 120.0f, SHAKE_START, false );
 		}
 	}
+#endif
 
 	// Send the railgun effect
 	DispatchParticleEffect( "Weapon_Combine_Ion_Cannon", vecTracerSrc, tr.endpos, vec3_angle, NULL );

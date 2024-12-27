@@ -1,0 +1,154 @@
+diff a/mp/src/game/server/gameinterface.cpp b/mp/src/game/server/gameinterface.cpp	(rejected hunks)
+@@ -85,6 +85,17 @@
+ #include "tier3/tier3.h"
+ #include "serverbenchmark_base.h"
+ 
++#ifdef LUA_SDK
++#include "luamanager.h"
++#include "luacachefile.h"
++#include "mountaddons.h"
++#endif
++
++#ifdef HL2SB
++#include "mountsteamcontent.h"
++#include "ticketfix.h"
++#endif
++
+ #ifdef CSTRIKE_DLL // BOTPORT: TODO: move these ifdefs out
+ #include "bot/bot.h"
+ #endif
+@@ -618,6 +629,17 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
+ 	//Tony; mount an extra appId if it exists.
+ 	MountAdditionalContent();
+ 
++#if defined ( HL2SB )
++	//Andrew; then mount everything the user wants to use.
++	MountUserContent();
++
++	// Finally, load all of the player's addons.
++	MountAddons();
++
++	// Fixes the issue where the external ip is not matching the local ip.
++	PatchTicketValidation();
++#endif
++
+ 	// cache the globals
+ 	gpGlobals = pGlobals;
+ 
+@@ -755,6 +777,11 @@ void CServerGameDLL::DLLShutdown( void )
+ 	}
+ #endif
+ 
++#ifdef HL2SB
++	//Andrew; fixes the "CNet Encrypt:0" issue in 2007-based mods.
++	SteamAPI_Shutdown();
++#endif
++
+ 	DisconnectTier3Libraries();
+ 	DisconnectTier2Libraries();
+ 	ConVar_Unregister();
+@@ -893,6 +920,33 @@ bool CServerGameDLL::IsRestoring()
+ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, char const *pOldLevel, char const *pLandmarkName, bool loadGame, bool background )
+ {
+ 	VPROF("CServerGameDLL::LevelInit");
++#if defined ( LUA_SDK )
++	lcf_recursivedeletefile( LUA_PATH_CACHE );
++
++	// Add Lua environment
++	luasrc_init();
++
++	luasrc_dofolder( L, LUA_PATH_EXTENSIONS );
++	luasrc_dofolder( L, LUA_PATH_MODULES );
++	luasrc_dofolder( L, LUA_PATH_GAME_SHARED );
++	luasrc_dofolder( L, LUA_PATH_GAME_SERVER );
++
++	luasrc_LoadWeapons();
++	luasrc_LoadEntities();
++	// luasrc_LoadEffects();
++
++	//Andrew; loadup base gamemode.
++	luasrc_LoadGamemode( LUA_BASE_GAMEMODE );
++
++	luasrc_LoadGamemode( gamemode.GetString() );
++	luasrc_SetGamemode( gamemode.GetString() );
++
++	if ( gpGlobals->maxClients > 1 )
++	{
++		// load LCF into stringtable
++		lcf_preparecachefile();
++	}
++#endif
+ 	ResetWindspeed();
+ 	UpdateChapterRestrictions( pMapName );
+ 
+@@ -1072,6 +1137,14 @@ void CServerGameDLL::ServerActivate( edict_t *pEdictList, int edictCount, int cl
+ #if defined ( SDK_DLL )
+ 	SDKGameRules()->ServerActivate();
+ #endif
++
++//Andrew; call activate on the gamemode
++#if defined ( LUA_SDK )
++	BEGIN_LUA_CALL_HOOK( "ServerActivate" );
++		lua_pushinteger( L, edictCount );
++		lua_pushinteger( L, clientMax );
++	END_LUA_CALL_HOOK( 2, 0 );
++#endif
+ }
+ 
+ //-----------------------------------------------------------------------------
+@@ -1252,6 +1329,14 @@ void CServerGameDLL::OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_
+ // Called when a level is shutdown (including changing levels)
+ void CServerGameDLL::LevelShutdown( void )
+ {
++#if defined ( LUA_SDK )
++	if (g_bLuaInitialized)
++	{
++		BEGIN_LUA_CALL_HOOK( "LevelShutdown" );
++		END_LUA_CALL_HOOK( 0, 0 );
++	}
++#endif
++
+ 	MDLCACHE_CRITICAL_SECTION();
+ 	IGameSystem::LevelShutdownPreEntityAllSystems();
+ 
+@@ -1267,6 +1352,10 @@ void CServerGameDLL::LevelShutdown( void )
+ 	CBaseEntity::SetAllowPrecache( false );
+ 
+ 	g_nCurrentChapterIndex = -1;
++
++#if defined ( LUA_SDK )
++	luasrc_shutdown();
++#endif
+ }
+ 
+ //-----------------------------------------------------------------------------
+@@ -2367,8 +2466,16 @@ void CServerGameClients::ClientActive( edict_t *pEdict, bool bLoadGame )
+ 
+ 	// Tell the sound controller to check looping sounds
+ 	CBasePlayer *pPlayer = ( CBasePlayer * )CBaseEntity::Instance( pEdict );
++#ifdef HL2SB
++	if( pPlayer )
++	{
++		CSoundEnvelopeController::GetController().CheckLoopingSoundsForPlayer( pPlayer );
++		SceneManager_ClientActive( pPlayer );
++	}
++#else
+ 	CSoundEnvelopeController::GetController().CheckLoopingSoundsForPlayer( pPlayer );
+ 	SceneManager_ClientActive( pPlayer );
++#endif
+ }
+ 
+ //-----------------------------------------------------------------------------
+@@ -2849,6 +2956,12 @@ void CServerGameClients::GetBugReportInfo( char *buf, int buflen )
+ //-----------------------------------------------------------------------------
+ void CServerGameClients::NetworkIDValidated( const char *pszUserName, const char *pszNetworkID )
+ {
++#if defined ( LUA_SDK )
++	BEGIN_LUA_CALL_HOOK( "NetworkIDValidated" );
++		lua_pushstring( L, pszUserName );
++		lua_pushstring( L, pszNetworkID );
++	END_LUA_CALL_HOOK( 2, 0 );
++#endif
+ }
+ 
+ 

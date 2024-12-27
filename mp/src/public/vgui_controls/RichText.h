@@ -29,7 +29,7 @@ class RichText : public Panel
 
 public:
 	RichText(Panel *parent, const char *panelName);
-	~RichText();
+	virtual ~RichText();
 
 	// text manipulation
 	virtual void SetText(const char *text);

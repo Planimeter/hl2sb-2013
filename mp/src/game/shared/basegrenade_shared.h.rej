@@ -1,0 +1,13 @@
+diff a/mp/src/game/shared/basegrenade_shared.h b/mp/src/game/shared/basegrenade_shared.h	(rejected hunks)
+@@ -28,9 +28,10 @@
+ 
+ class CTakeDamageInfo;
+ 
++//Andrew; See http://www.mail-archive.com/hlcoders@list.valvesoftware.com/msg28578.html
+ //Tony; Compromise! in episodic single player, inherit CBaseCombatCharacter for the barnacle interaction, otherwise this will never get called.
+ class CBaseGrenade : 
+-	#if defined( HL2_EPISODIC )
++	#if defined( HL2_EPISODIC ) || defined ( HL2MP )	//Tony; HL2MP needs this too for tripmine grenades.
+ 		public CBaseCombatCharacter
+ 	#else
+ 		public CBaseAnimating

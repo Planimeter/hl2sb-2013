@@ -436,6 +436,14 @@ public:
 
 	CUserCmd		*m_pCurrentCommand;
 
+#ifdef ARGG
+	// adnan
+	// store the use angles
+	// set when the player presses use
+	QAngle		m_vecUseAngles;
+	// end adnan
+#endif
+
 	// Movement constraints
 	EHANDLE			m_hConstraintEntity;
 	Vector			m_vecConstraintCenter;
@@ -618,7 +626,11 @@ protected:
 	CUtlVector<CHandle<C_EconWearable > >	m_hMyWearables;
 #endif
 
+#ifdef LUA_SDK
+public:
+#else
 private:
+#endif
 
 	struct StepSoundCache_t
 	{

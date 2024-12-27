@@ -1,0 +1,68 @@
+diff a/mp/src/game/client/spritemodel.cpp b/mp/src/game/client/spritemodel.cpp	(rejected hunks)
+@@ -218,10 +218,12 @@ static unsigned int spriteOrientationCache = 0;
+ bool CEngineSprite::Init( const char *pName )
+ {
+ 	m_hAVIMaterial = AVIMATERIAL_INVALID;
++	m_hBIKMaterial = BIKMATERIAL_INVALID;
+ 	m_width = m_height = m_numFrames = 1;
+ 
+ 	const char *pExt = Q_GetFileExtension( pName );
+ 	bool bIsAVI = pExt && !Q_stricmp( pExt, "avi" );
++	bool bIsBIK = pExt && !Q_stricmp( pExt, "bik" );
+ 	if ( bIsAVI )
+ 	{
+ 		m_hAVIMaterial = avi->CreateAVIMaterial( pName, pName, "GAME" );
+@@ -232,6 +234,16 @@ bool CEngineSprite::Init( const char *pName )
+ 		avi->GetFrameSize( m_hAVIMaterial, &m_width, &m_height );
+ 		m_numFrames = avi->GetFrameCount( m_hAVIMaterial );
+ 	}
++	else if ( bIsBIK )
++	{
++		m_hBIKMaterial = bik->CreateMaterial( pName, pName, "GAME" );
++		if (m_hBIKMaterial == BIKMATERIAL_INVALID )
++			return false;
++
++		m_material = bik->GetMaterial( m_hBIKMaterial );
++		bik->GetFrameSize( m_hBIKMaterial, &m_width, &m_height );
++		m_numFrames = bik->GetFrameCount( m_hBIKMaterial );
++	}
+ 	else
+ 	{
+ 		m_material = materials->FindMaterial( pName, TEXTURE_GROUP_CLIENT_EFFECTS );
+@@ -298,6 +310,14 @@ bool CEngineSprite::IsAVI()
+ 	return ( m_hAVIMaterial != AVIMATERIAL_INVALID );
+ }
+ 
++//-----------------------------------------------------------------------------
++// Is the sprite an BIK?
++//-----------------------------------------------------------------------------
++bool CEngineSprite::IsBIK()
++{
++	return ( m_hBIKMaterial != AVIMATERIAL_INVALID );
++}
++
+ 
+ //-----------------------------------------------------------------------------
+ // Returns the texture coordinate range	used to draw the sprite
+@@ -310,6 +330,10 @@ void CEngineSprite::GetTexCoordRange( float *pMinU, float *pMinV, float *pMaxU,
+ 	{
+ 		avi->GetTexCoordRange( m_hAVIMaterial, pMaxU, pMaxV );
+ 	}
++	if ( IsBIK() )
++	{
++		bik->GetTexCoordRange( m_hBIKMaterial, pMaxU, pMaxV );
++	}
+ 	float flOOWidth = ( m_width != 0 ) ? 1.0f / m_width : 1.0f;
+ 	float flOOHeight = ( m_height!= 0 ) ? 1.0f / m_height : 1.0f;
+ 
+@@ -361,6 +385,10 @@ void CEngineSprite::SetFrame( float frame )
+ 	{
+ 		avi->SetFrame( m_hAVIMaterial, frame );
+ 	}
++	else if ( IsBIK() )
++	{
++		bik->SetFrame( m_hBIKMaterial, frame );
++	}
+ 	else
+ 	{
+ 		IMaterialVar* pFrameVar = m_material->FindVarFast( "$frame", &frameCache );

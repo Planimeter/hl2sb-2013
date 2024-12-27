@@ -1,0 +1,9 @@
+diff a/mp/src/game/client/hl2/c_weapon_gravitygun.cpp b/mp/src/game/client/hl2/c_weapon_gravitygun.cpp	(rejected hunks)
+@@ -11,6 +11,7 @@
+ #include "beamdraw.h"
+ #include "c_weapon__stubs.h"
+ #include "ClientEffectPrecacheSystem.h"
++#include "weapon_hl2mpbasehlmpcombatweapon.h"
+ 
+ // memdbgon must be the last include file in a .cpp file!!!
+ #include "tier0/memdbgon.h"

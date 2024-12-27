@@ -307,13 +307,23 @@ bool CAI_Expresser::SpeakFindResponse( AI_Response &outResponse, AIConcept_t con
 		}
 	}
 
+	CBaseFlex *pOuter = GetOuter();
+#ifdef HL2SB
+	if( !pOuter )
+		return NULL;
+#endif
+
 	// Let our outer fill in most match criteria
-	GetOuter()->ModifyOrAppendCriteria( set );
+	pOuter->ModifyOrAppendCriteria( set );
 
 	// Append local player criteria to set, but not if this is a player doing the talking
-	if ( !GetOuter()->IsPlayer() )
+	if ( !pOuter->IsPlayer() )
 	{
+#ifdef HL2SB
+		CBasePlayer *pPlayer = AI_GetNearestPlayer( pOuter->GetAbsOrigin() );
+#else
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
+#endif
 		if( pPlayer )
 			pPlayer->ModifyOrAppendPlayerCriteria( set );
 	}
@@ -879,7 +889,11 @@ void CAI_ExpresserHost_NPC_DoModifyOrAppendCriteria( CAI_BaseNPC *pSpeaker, AI_C
 		set.AppendCriteria( "weapon", "none" );
 	}
 
+#ifdef HL2SB
+	CBasePlayer *pPlayer = AI_GetNearestPlayer( pSpeaker->GetAbsOrigin() );
+#else
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 	if ( pPlayer )
 	{
 		Vector distance = pPlayer->GetAbsOrigin() - pSpeaker->GetAbsOrigin();

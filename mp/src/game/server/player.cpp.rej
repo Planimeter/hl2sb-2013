@@ -1,0 +1,38 @@
+diff a/mp/src/game/server/player.cpp b/mp/src/game/server/player.cpp	(rejected hunks)
+@@ -854,9 +871,27 @@ void CBasePlayer::DrawDebugGeometryOverlays(void)
+ //=========================================================
+ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr )
+ {
++#if defined ( LUA_SDK )
++	CTakeDamageInfo linputInfo = inputInfo;
++	Vector lvecDir = vecDir;
++
++	BEGIN_LUA_CALL_HOOK( "PlayerTraceAttack" );
++		lua_pushplayer( L, this );
++		lua_pushdamageinfo( L, linputInfo );
++		lua_pushvector( L, lvecDir );
++		lua_pushtrace( L, *ptr );
++	END_LUA_CALL_HOOK( 4, 1 );
++
++	RETURN_LUA_NONE();
++#endif
++
+ 	if ( m_takedamage )
+ 	{
++#if defined ( LUA_SDK )
++		CTakeDamageInfo info = linputInfo;
++#else
+ 		CTakeDamageInfo info = inputInfo;
++#endif
+ 
+ 		if ( info.GetAttacker() )
+ 		{
+@@ -5906,7 +5968,7 @@ static void CreateJeep( CBasePlayer *pPlayer )
+ 	Vector vecForward;
+ 	AngleVectors( pPlayer->EyeAngles(), &vecForward );
+ //Tony; in sp sdk, we have prop_vehicle_hl2buggy; because episode 2 modified the jeep code to turn it into the jalopy instead of the regular buggy
+-#if defined ( SP_SDK )
++#if defined ( SP_SDK ) || defined ( HL2SB )
+ 	CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName( "prop_vehicle_hl2buggy" );
+ #else
+ 	CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName( "prop_vehicle_jeep" );

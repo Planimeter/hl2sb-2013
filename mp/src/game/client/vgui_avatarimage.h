@@ -191,6 +191,7 @@ public:
 	DECLARE_CLASS_SIMPLE( CAvatarImagePanel, vgui::Panel );
 
 	CAvatarImagePanel( vgui::Panel *parent, const char *name );
+	virtual ~CAvatarImagePanel() {}
 
 	// Set the player that this Avatar should display for
 	//=============================================================================

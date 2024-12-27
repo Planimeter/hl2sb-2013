@@ -79,7 +79,7 @@ public:
 	QAngle	m_angRotation;
 	Vector	m_vOriginVelocity;
 	int		m_nLastFramecount : 31;
-	int		m_bAnglesComputed : 1;
+	unsigned int		m_bAnglesComputed : 1;
 };
 
 
@@ -568,10 +568,16 @@ private:
 	CInterpolatedVarArray< float, MAXSTUDIOBONECTRLS >		m_iv_flEncodedController;
 	float							m_flOldEncodedController[MAXSTUDIOBONECTRLS];
 
+#ifdef HL2SB
+public:
+#endif
 	// Clientside animation
 	bool							m_bClientSideAnimation;
 	bool							m_bLastClientSideFrameReset;
 
+#ifdef HL2SB
+private:
+#endif
 	int								m_nNewSequenceParity;
 	int								m_nResetEventsParity;
 

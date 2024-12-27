@@ -22,6 +22,7 @@ class CAchievementNotificationPanel : public CHudElement, public EditablePanel
 
 public:
 	CAchievementNotificationPanel( const char *pElementName );
+	virtual ~CAchievementNotificationPanel() {}
 
 	virtual void	Init();
 	virtual void	ApplySchemeSettings( IScheme *scheme );

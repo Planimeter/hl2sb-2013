@@ -27,6 +27,7 @@ class CHudFilmDemo : public CHudElement, public vgui::Panel
 	DECLARE_CLASS_SIMPLE( CHudFilmDemo, vgui::Panel );
 public:
 	CHudFilmDemo( const char *name );
+	virtual ~CHudFilmDemo() {}
 
 	// vgui overrides
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme );

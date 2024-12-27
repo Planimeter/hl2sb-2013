@@ -19,6 +19,7 @@ class CHudChatLine : public CBaseHudChatLine
 
 public:
 	CHudChatLine( vgui::Panel *parent, const char *panelName ) : CBaseHudChatLine( parent, panelName ) {}
+	virtual ~CHudChatLine() {}
 
 	virtual void	ApplySchemeSettings(vgui::IScheme *pScheme);
 
@@ -39,6 +40,7 @@ class CHudChatInputLine : public CBaseHudChatInputLine
 	
 public:
 	CHudChatInputLine( CBaseHudChat *parent, char const *panelName ) : CBaseHudChatInputLine( parent, panelName ) {}
+	virtual ~CHudChatInputLine() {}
 
 	virtual void	ApplySchemeSettings(vgui::IScheme *pScheme);
 };
@@ -49,6 +51,7 @@ class CHudChat : public CBaseHudChat
 
 public:
 	CHudChat( const char *pElementName );
+	virtual ~CHudChat() {}
 
 	virtual void	CreateChatInputLine( void );
 	virtual void	CreateChatLines( void );

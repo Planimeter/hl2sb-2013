@@ -13,6 +13,7 @@ $Configuration
 		$PlatformToolset "v110" [$VS2012 && $ANALYZE] // VS 2012 for /analyze
 		$PlatformToolset "v120_xp" [$VS2013 && !$ANALYZE] // VS 2013 targeting Windows XP - http://msdn.microsoft.com/en-us/library/vstudio/jj851139.aspx
 		$PlatformToolset "v120" [$VS2013 && $ANALYZE] // VS 2013 for /analyze
+		$PlatformToolset "v143" [$VS2022]
 	}
 
 	$General
@@ -31,7 +32,14 @@ $Configuration
 		$MultiProcessorCompilation "True"
 
 		// warning C4316: object allocated on the heap may not be aligned 16
+		// warning C4456: declaration of 'identifier' hides previous local declaration
+		// warning C4457: declaration of 'identifier' hides function parameter
+		// warning C4458: declaration of 'identifier' hides class member
+		// warning C4459: declaration of 'identifier' hides global declaration
+		// warning C4838: conversion from 'type_1' to 'type_2' requires a narrowing conversion
+		// warning C26495: Variable 'variable' is uninitialized. Always initialize a member variable (type.6).
 		$DisableSpecificWarnings	"$BASE;4316" [$VS2013]
+		$DisableSpecificWarnings	"$BASE;4316;4456;4457;4458;4459;4838;26495" [$VS2022]
 
 		// Having lots of warnings makes it harder to notice new, and possibly
 		// important warnings, both on buildbot and in the output window. Lots
@@ -40,6 +48,7 @@ $Configuration
 		// keep the warning count down is to have warnings-as-errors.
 		// We will not be warning free on 64-bit for a while...
 		$TreatWarningsAsErrors				"Yes (/WX)" [!$ANALYZE && !$WIN64]
+		$TreatWarningsAsErrors				"No" [$VS2022]
 
 		// Defines to differentiate 32 from 64 bit builds
 		$PreprocessorDefinitions			"$BASE;PLATFORM_64BITS;WIN64;_WIN64;COMPILER_MSVC64" [$WIN64]

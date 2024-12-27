@@ -57,6 +57,10 @@
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
 
+#ifdef LUA_SDK
+#include "luamanager.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -237,6 +241,13 @@ END_RECV_TABLE()
 
 		RecvPropVector		( RECVINFO( m_vecBaseVelocity ) ),
 
+#ifdef ARGG
+		// adnan
+		// get the use angles
+		RecvPropVector		( RECVINFO( m_vecUseAngles ) ),
+		// end adnan
+#endif
+
 		RecvPropEHandle		( RECVINFO( m_hConstraintEntity)),
 		RecvPropVector		( RECVINFO( m_vecConstraintCenter) ),
 		RecvPropFloat		( RECVINFO( m_flConstraintRadius )),
@@ -287,6 +298,13 @@ END_RECV_TABLE()
 
 		RecvPropFloat	(RECVINFO(m_flMaxspeed)),
 		RecvPropInt		(RECVINFO(m_fFlags)),
+
+#ifdef ARGG
+		// adnan
+		// get the use angles
+		RecvPropVector		( RECVINFO( m_vecUseAngles ) ),
+		// end adnan
+#endif
 
 
 		RecvPropInt		(RECVINFO(m_iObserverMode), 0, RecvProxy_ObserverMode ),
@@ -1385,6 +1403,23 @@ void C_BasePlayer::CreateWaterEffects( void )
 //-----------------------------------------------------------------------------
 void C_BasePlayer::OverrideView( CViewSetup *pSetup )
 {
+#ifdef ARGG
+	// adnan
+	// OVERRIDING THE VIEW
+	// need to override the angles too
+	C_BaseCombatWeapon *pWeapon = GetActiveWeapon();
+	if ( pWeapon )
+	{
+		// adnan
+		if(pWeapon->OverrideViewAngles()) {
+			// use the useAngles!
+				// override with the angles the server sends to us as useAngles
+				// use the useAngles only if we're holding and rotating with the grav gun
+			pSetup->angles = m_vecUseAngles;
+		}
+	}
+	// end adnan
+#endif
 }
 
 bool C_BasePlayer::ShouldInterpolate()

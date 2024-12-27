@@ -28,6 +28,7 @@ class CHudHDRDemo : public CHudElement, public vgui::Panel
 	DECLARE_CLASS_SIMPLE( CHudHDRDemo, vgui::Panel );
 public:
 	CHudHDRDemo( const char *name );
+	virtual ~CHudHDRDemo() {}
 
 	// vgui overrides
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme );

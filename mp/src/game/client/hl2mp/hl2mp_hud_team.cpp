@@ -28,6 +28,7 @@ class CTeamPlayHud : public vgui::Panel, public CHudElement
 
 public:
 	CTeamPlayHud( const char *pElementName );
+	virtual ~CTeamPlayHud() {}
 	void Reset();
 
 	virtual void PerformLayout();

@@ -84,6 +84,7 @@ class CTeleportCountdownScreen : public CVGuiScreenPanel
 
 public:
 	CTeleportCountdownScreen( vgui::Panel *parent, const char *panelName );
+	virtual ~CTeleportCountdownScreen() {}
 
 	virtual bool Init( KeyValues* pKeyValues, VGuiScreenInitData_t* pInitData );
 	virtual void OnTick();

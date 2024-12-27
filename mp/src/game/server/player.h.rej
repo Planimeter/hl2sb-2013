@@ -1,0 +1,32 @@
+diff a/mp/src/game/server/player.h b/mp/src/game/server/player.h	(rejected hunks)
+@@ -1112,6 +1126,9 @@ public:
+ private:
+ 	bool m_autoKickDisabled;
+ 
++#if defined( LUA_SDK )
++public:
++#endif
+ 	struct StepSoundCache_t
+ 	{
+ 		StepSoundCache_t() : m_usSoundNameIndex( 0 ) {}
+@@ -1121,6 +1138,9 @@ private:
+ 	// One for left and one for right side of step
+ 	StepSoundCache_t		m_StepSoundCache[ 2 ];
+ 
++#if defined( LUA_SDK )
++private:
++#endif
+ 	CUtlLinkedList< CPlayerSimInfo >  m_vecPlayerSimInfo;
+ 	CUtlLinkedList< CPlayerCmdInfo >  m_vecPlayerCmdInfo;
+ private:
+@@ -1245,6 +1265,10 @@ inline bool CBasePlayer::TouchedPhysics( void )
+ 	return m_touchedPhysObject; 
+ }
+ 
++#ifdef HL2SB
++extern CBaseEntity *FindPlayerStart(const char *pszClassName);
++#endif
++
+ //-----------------------------------------------------------------------------
+ // Converts an entity to a player
+ //-----------------------------------------------------------------------------

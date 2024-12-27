@@ -1125,6 +1125,20 @@ private:
 
 	EHANDLE					m_hViewEntity;
 
+#ifdef ARGG
+public:
+	// adnan
+	// send the use angles for the current player... set when they press use
+	// UPDATE: this could be improved somehow by only storing these on the server side
+	//  - set a flag on the client and send that, stating that the viewangles shouldnt change
+	//  - ... maybe not
+	CNetworkQAngle( m_vecUseAngles );
+	// end adnan
+
+private:
+
+#endif
+
 	// Movement constraints
 	CNetworkHandle( CBaseEntity, m_hConstraintEntity );
 	CNetworkVector( m_vecConstraintCenter );
@@ -1201,6 +1215,9 @@ private:
 
 	bool m_autoKickDisabled;
 
+#ifdef LUA_SDK
+public:
+#endif
 	struct StepSoundCache_t
 	{
 		StepSoundCache_t() : m_usSoundNameIndex( 0 ) {}
@@ -1210,6 +1227,9 @@ private:
 	// One for left and one for right side of step
 	StepSoundCache_t		m_StepSoundCache[ 2 ];
 
+#ifdef LUA_SDK
+private:
+#endif
 	CUtlLinkedList< CPlayerSimInfo >  m_vecPlayerSimInfo;
 	CUtlLinkedList< CPlayerCmdInfo >  m_vecPlayerCmdInfo;
 
@@ -1356,6 +1376,10 @@ inline bool CBasePlayer::IsFiringWeapon( void ) const
 }
 
 
+
+#ifdef HL2SB
+extern CBaseEntity *FindPlayerStart(const char *pszClassName);
+#endif
 
 //-----------------------------------------------------------------------------
 // Converts an entity to a player

@@ -45,6 +45,7 @@ class CHudHealth : public CHudElement, public CHudNumericDisplay
 
 public:
 	CHudHealth( const char *pElementName );
+	virtual ~CHudHealth() {}
 	virtual void Init( void );
 	virtual void VidInit( void );
 	virtual void Reset( void );

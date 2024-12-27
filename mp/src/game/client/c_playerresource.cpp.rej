@@ -1,0 +1,12 @@
+diff a/mp/src/game/client/c_playerresource.cpp b/mp/src/game/client/c_playerresource.cpp	(rejected hunks)
+@@ -128,7 +128,10 @@ const char *C_PlayerResource::GetPlayerName( int iIndex )
+ {
+ 	if ( iIndex < 1 || iIndex > MAX_PLAYERS )
+ 	{
++		// Andrew; In HL2SB, we could be an NPC calling into this code
++#ifndef HL2SB
+ 		Assert( false );
++#endif
+ 		return "ERRORNAME";
+ 	}
+ 	

@@ -14,8 +14,8 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories		"$BASE;hl2mp\ui,.\hl2mp,$SRCDIR\game\shared\hl2mp,.\hl2,.\hl2\elements,$SRCDIR\game\shared\hl2"
-		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL"
+		$AdditionalIncludeDirectories		"$BASE;hl2mp\ui,.\hl2mp,$SRCDIR\game\shared\hl2mp,.\hl2,.\episodic,.\hl2\elements,$SRCDIR\game\shared\hl2,$SRCDIR\game\shared\episodic,$SRCDIR\thirdparty\lua-5.1.5\etc,$SRCDIR\thirdparty\lua-5.1.5\src"
+		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL;HL2_EPISODIC;ARGG;LUA_SDK;HL2SB"
 	}
 }
 
@@ -83,6 +83,7 @@ $Project "Client (HL2MP)"
 			$File	"$SRCDIR\game\shared\hl2\citadel_effects_shared.h"
 			$File	"$SRCDIR\game\shared\hl2\env_headcrabcanister_shared.cpp"
 			$File	"$SRCDIR\game\shared\hl2\env_headcrabcanister_shared.h"
+			$File	"episodic\flesh_internal_material_proxy.cpp"
 			$File	"hl2\fx_antlion.cpp"
 			$File	"hl2\fx_bugbait.cpp"
 			$File	"hl2\fx_hl2_impacts.cpp"
@@ -111,6 +112,7 @@ $Project "Client (HL2MP)"
 			$File	"hl2\hud_weaponselection.cpp"
 			$File	"hl2\hud_zoom.cpp"
 			$File	"hl2\shieldproxy.cpp"
+			$File	"$SRCDIR\game\shared\hl2\survival_gamerules.cpp"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
 		}
 
@@ -169,6 +171,15 @@ $Project "Client (HL2MP)"
 				$File	"hl2mp\ui\hl2mptextwindow.h"
 				$File	"hl2mp\hud_deathnotice.cpp"
 			}
+		}
+
+		$Folder "HL2SB"
+		{
+			$File	"$SRCDIR\game\shared\mountsteamcontent.cpp"
+			$File	"$SRCDIR\game\shared\mountsteamcontent.h"
+			$File	"$SRCDIR\game\shared\hl2mp\weapon_physgun.cpp"
+			// $File	"$SRCDIR\game\shared\hl2mp\weapon_physgun_argg.cpp"
+			// $File	"$SRCDIR\game\shared\hl2mp\weapon_physgun_valve.cpp"
 		}
 	}
 }
