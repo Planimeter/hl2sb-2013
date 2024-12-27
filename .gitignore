@@ -54,4 +54,5 @@ config.cfg
 # shader files
 *.tmp
 *.lib
+*.vcxproj.*
 *.pdb
